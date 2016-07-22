@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc
+	      http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+		  http://www.springframework.org/schema/beans 
+		  http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		  http://www.springframework.org/schema/context 
+		  http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		  http://www.springframework.org/schema/aop
+		  http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+		  "
+	default-lazy-init="false">
+	<!-- 扫描指定的包中的类上的注解 -->
+	<context:component-scan base-package="com.hejinwei.diary" />
+	<aop:aspectj-autoproxy proxy-target-class="false" />
+	
+	<mvc:resources location="/static/" mapping="/static/**" />
+
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="true">
+			<!-- 配置Fastjson支持 -->
+			<bean
+				class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html;charset=UTF-8</value>
+						<value>application/json</value>
+					</list>
+				</property>
+				<property name="features">
+					<list>
+						<value>WriteMapNullValue</value>
+						<value>QuoteFieldNames</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<!-- <bean name="printFunction" class="beetl.function.Print" />
+	<bean name="utcFormatFunction" class="beetl.function.UTCFormat" /> -->
+	<bean name="beetlConfig" class="org.beetl.ext.spring.BeetlGroupUtilConfiguration"
+		init-method="init">
+		<property name="configFileResource" value="/WEB-INF/beetl.properties" />
+		<property name="functions">
+			<map>
+				<!-- <entry key="printFunction" value-ref="printFunction" />
+				<entry key="utcFormatFunction" value-ref="utcFormatFunction" /> -->
+			</map>
+		</property>
+	</bean>
+	<bean name="beetlViewResolver" class="org.beetl.ext.spring.BeetlSpringViewResolver">
+		<!-- 多视图解析器，需要设置viewNames和order -->
+		<property name="viewNames">
+			<list>
+				<value>template/**</value>
+			</list>
+		</property>
+		<property name="contentType" value="text/html;charset=UTF-8" />
+		<property name="order" value="0" />
+		<!-- 多GroupTemplate，需要指定使用的bean -->
+		<property name="config" ref="beetlConfig" />
+		<property name="suffix" value=".html" />
+	</bean>
+
+	<!-- <mvc:default-servlet-handler/> -->
+
+	<!-- 视图解释类 -->
+	<bean name="JSPViewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="order" value="256" />
+		<property name="prefix" value="/jsps/" />
+		<property name="suffix" value=".jsp" />
+		<!--可为空,方便实现自已的依据扩展名来选择视图解释类的逻辑 -->
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+	</bean>
+	
+	<!-- 拦截器 -->
+	<mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/mine/**"/>
+            <bean class="com.hejinwei.diary.interceptor.NeedLoginInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+    
+    <!-- 上传文件拦截，设置最大上传文件大小   10M=10*1024*1024(B)=10485760 bytes -->  
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
+    	<property name="maxUploadSize" value="10485760" />  
+	</bean>
+
+</beans>
