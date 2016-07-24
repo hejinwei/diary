@@ -42,8 +42,15 @@ public class NeedLoginInterceptor implements HandlerInterceptor {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-		// 暂时do nothing
 		// modelAndView为null的时候代表ajax请求
+		if (modelAndView != null) {
+			Cookie userIdCookie =
+					CookieHelper.getCookieByName(request, Constants.COOKIE_NAME_USERID);
+			if (userIdCookie != null && userIdCookie.getValue() != null) {
+				User user = (User) memcachedService.getWithType(userIdCookie.getValue(), User.class);
+				modelAndView.addObject("curUser", user);
+			}
+		}
 	}
 
 	@Override

@@ -1,103 +1,142 @@
 <!DOCTYPE html>
 <html>
 <head lang="zh">
-  <meta charset="UTF-8">
-  <title>注册</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="format-detection" content="telephone=no">
-  <meta name="renderer" content="webkit">
-  <meta http-equiv="Cache-Control" content="no-siteapp" />
-  <link rel="alternate icon" type="image/png" href="${contextPath}/static/assets/i/favicon.png">
-  <link rel="stylesheet" href="${contextPath}/static/assets/css/amazeui.min.css"/>
-  <link rel="stylesheet" type="text/css" href="${contextPath}/static/webuploader/webuploader.css">
-  
-  <style>
-    .header {
-      text-align: center;
-    }
-    .header h1 {
-      font-size: 200%;
-      color: #333;
-      margin-top: 30px;
-    }
-    .header p {
-      font-size: 14px;
-    }
-  </style>
-  
-  <script type="text/javascript" src="${contextPath}/static/jquery-3.0.0.min.js"></script>
-  <script type="text/javascript" src="${contextPath}/static/webuploader/webuploader.js"></script>
-  <script type="text/javascript" src="${contextPath}/static/custom/uploadImage.js?v=1"></script>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="alternate icon" type="image/png" href="${contextPath}/static/assets/i/favicon.png">
+    <link rel="stylesheet" href="${contextPath}/static/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="${contextPath}/static/webuploader/webuploader.css">
+
+    <style>
+        .header {
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 200%;
+            color: #333;
+            margin-top: 30px;
+        }
+
+        .header p {
+            font-size: 14px;
+        }
+    </style>
+
+    <script type="text/javascript" src="${contextPath}/static/jquery-3.0.0.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/webuploader/webuploader.js"></script>
+    <script type="text/javascript" src="${contextPath}/static/custom/uploadImage.js?v=1"></script>
 </head>
 <body>
 <div class="header">
-  <div class="am-g">
-    <h1>修行日记</h1>
-    <p>人生本是一场修行</p>
-  </div>
-  <hr />
+    <div class="am-g">
+        <h1>修行日记</h1>
+
+        <p>人生本是一场修行</p>
+    </div>
+    <hr/>
 </div>
 <div class="am-g">
-  <div class="am-u-lg-6 am-u-md-8 am-u-sm-centered">
-    <h2>注册</h2>
-    <hr>
-    
-    <br>
-    <br>
+    <div class="am-u-lg-6 am-u-md-8 am-u-sm-centered">
+        <h2>注册</h2>
+        <hr>
 
-    <form method="post" class="am-form" action="doRegister">
-      <label for="name">用户名:</label>
-      <input type="text" name="name" id="name" value="">
-      <br>
-      <label for="password">密码:</label>
-      <input type="password" name="password" id="password" value="">
-      <br>
-      <label for="repeatPassword">用户名:</label>
-      <input type="password" name="repeatPassword" id="repeatPassword" value="">
-      <br>
-      <label for="nickname">昵称:</label>
-      <input type="text" name="nickname" id="nickname" value="">
-      <br>
-      <label for="sign">个性签名:</label>
-      <input type="text" name="sign" id="sign" value="">
-      <br>
-      <label for="headImageList">头像:</label>
-	  <div id="headImageList" class="uploader-list">
-			<div id="imgWrapper_0" class="webuploader-picker-inline">
-				<a id="headImagePicker" type="button"></a>
-			</div>
-	  </div>
-      
-      <br>
-      
-      <br />
-      <div class="am-cf">
-        <input onclick="doRegister()" type="submit" name="" value="确定" class="am-btn am-btn-primary am-btn-sm am-fl">
-      </div>
-    </form>
-    <hr>
-    <p>版权--W</p>
-  </div>
+        <br>
+        <br>
+
+        <form method="post" class="am-form" action="doRegister" onsubmit="check()">
+            <label for="name">用户名:</label>
+            <input type="text" name="name" id="name" value="">
+            <br>
+            <label for="password">密码:</label>
+            <input type="password" name="password" id="password" value="">
+            <br>
+            <label for="repeatPassword">确认密码:</label>
+            <input type="password" name="repeatPassword" id="repeatPassword" value="">
+            <br>
+            <label for="nickname">昵称:</label>
+            <input type="text" name="nickname" id="nickname" value="">
+            <br>
+            <label for="sign">个性签名:</label>
+            <input type="text" name="sign" id="sign" value="">
+            <br>
+            <label for="headImageList">头像:</label>
+
+            <div id="headImageList" class="uploader-list">
+                <div id="imgWrapper_0" class="webuploader-picker-inline">
+                    <a id="headImagePicker" type="button"></a>
+                </div>
+            </div>
+
+            <br>
+
+            <br/>
+
+            <div class="am-cf">
+                <input onclick="doRegister()" type="submit" name="" value="确定"
+                       class="am-btn am-btn-primary am-btn-sm am-fl">
+            </div>
+        </form>
+        <hr>
+        <p>版权--W</p>
+    </div>
 </div>
 </body>
 
 <script type="text/javascript">
 
 
-	jQuery(document)
-			.ready(
-					function() {
+    jQuery(document)
+            .ready(
+            function () {
 
-						var imageType = '100';
-						
-						addImageUploader(true, 1, "headImagePicker", "headImageList", "headImage", imageType, null, '${contextPath}');
-						
-					});
+                var imageType = '100';
 
-	function doRegister() {
+                addImageUploader(true, 1, "headImagePicker", "headImageList", "headImage", imageType, null, '${contextPath}');
 
-	}
+            });
+
+    function check() {
+        var name = $('#name').val();
+        var password = $('#password').val();
+        var repeatPassword = $('#repeatPassword').val();
+        var nickname = $('#nickname').val();
+
+        if (name == '') {
+            alert('用户名不能为空');
+            return false;
+        }
+
+        if (name.indexOf(' ') != -1) {
+            alert('用户名中不能包含空格');
+            return false;
+        }
+
+        if (password == '') {
+            alert('密码不能为空');
+            return false;
+        }
+
+        if (password.indexOf(' ') != -1) {
+            alert('密码中不能包含空格');
+            return false;
+        }
+
+        if (password != repeatPassword) {
+            alert('两次输入的密码不一致');
+            return false;
+        }
+
+        if (nickname == '') {
+            alert('昵称不能为空');
+            return false;
+        }
+    }
 </script>
 
 

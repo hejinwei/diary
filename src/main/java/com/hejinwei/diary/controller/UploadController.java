@@ -1,6 +1,8 @@
 package com.hejinwei.diary.controller;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +32,8 @@ public class UploadController {
 	private static String qiniuToken = auth.uploadToken(QINIU_BUCKET_NAME);
 	
 	private static final String QINIU_PIC_URL_PREFIX = "http://o9vm2dp5m.bkt.clouddn.com/";
+
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@RequestMapping("/upload/image/1")
 	public String uploadImageQiniu(@RequestParam("imageType") int imageType,
@@ -38,7 +42,7 @@ public class UploadController {
 		
 		System.out.println("上传图片：" + file.getOriginalFilename());
 		
-		String fileName = UUID.randomUUID() + ".jpg";
+		String fileName = imageType + "/" + sdf.format(new Date()) + "/" + UUID.randomUUID() + ".jpg";
 		
 		try {
 			Response qiniuResponse = uploadManager.put(file.getBytes(), fileName, qiniuToken);
