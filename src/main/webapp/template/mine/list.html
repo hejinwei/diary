@@ -35,10 +35,20 @@ layout("/template/layout/mineLayout.html", layoutParas){ %>
 	<div class="am-u-sm-12 am-u-md-3">
 		<div class="am-form-group">
 			<select id="selectType" data-am-selected="{btnSize: 'sm'}" onchange="changeDiaryType()">
-				<option value="0">所有类别</option>
-				
+
+				<% if (type==0) { %>
+					<option selected="selected" value="0">所有类别</option>
+				<% } else { %>
+					<option value="0">所有类别</option>
+				<% } %>
+
 				<% for (diaryTypeEnum in diaryTypeEnums){ %>
-					<option value="${diaryTypeEnum.type}">${diaryTypeEnum.desc}</option>
+					<% if (type == diaryTypeEnum.type) { %>
+						<option selected="selected" value="${diaryTypeEnum.type}">${diaryTypeEnum.desc}</option>
+					<% } else { %>
+						<option value="${diaryTypeEnum.type}">${diaryTypeEnum.desc}</option>
+					<% } %>
+
 				<% } %>
 				
 			</select>

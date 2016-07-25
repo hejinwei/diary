@@ -67,6 +67,8 @@ public class MineController {
 		mav.addObject("privateTypeMap", PrivateTypeEnum.getMap());
 		mav.addObject("weatherMap", WeatherEnum.getMap());
 
+		mav.addObject("type", type == null ? (byte)0 : type);
+
 		return mav;
 	}
 
