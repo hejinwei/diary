@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hejinwei.diary.dao.mybatis.model.User;
-import com.hejinwei.diary.enums.LoginStatus;
+import com.hejinwei.diary.enums.LoginStatusEnum;
 import com.hejinwei.diary.service.MemcachedService;
 import com.hejinwei.diary.service.UserService;
 import com.hejinwei.diary.util.Constants;
@@ -43,31 +43,31 @@ public class LoginController {
 		JSONObject jsonObject = new JSONObject();
 
 		if (StringUtils.isEmpty(name) || StringUtils.isEmpty(password)) {
-			jsonObject.put("code", LoginStatus.INPUT_EMPTY.getCode());
-			jsonObject.put("desc", LoginStatus.INPUT_EMPTY.getDesc());
+			jsonObject.put("code", LoginStatusEnum.INPUT_EMPTY.getCode());
+			jsonObject.put("desc", LoginStatusEnum.INPUT_EMPTY.getDesc());
 			return jsonObject.toString();
 		}
 
 		User user = userService.findByName(name);
 		if (user == null) {
-			jsonObject.put("code", LoginStatus.USER_NOT_EXIST.getCode());
-			jsonObject.put("desc", LoginStatus.USER_NOT_EXIST.getDesc());
+			jsonObject.put("code", LoginStatusEnum.USER_NOT_EXIST.getCode());
+			jsonObject.put("desc", LoginStatusEnum.USER_NOT_EXIST.getDesc());
 			return jsonObject.toString();
 		}
 
 		password = MD5Util.getMD5WithSalt(password);
 		if (!password.equals(user.getPassword())) {
-			jsonObject.put("code", LoginStatus.PASSWORD_WRONG.getCode());
-			jsonObject.put("desc", LoginStatus.PASSWORD_WRONG.getDesc());
+			jsonObject.put("code", LoginStatusEnum.PASSWORD_WRONG.getCode());
+			jsonObject.put("desc", LoginStatusEnum.PASSWORD_WRONG.getDesc());
 			return jsonObject.toString();
 		}
 
-		memcachedService.setWithType(user.getId() + "", user, User.class);
-		CookieHelper.addCookie(response, Constants.COOKIE_NAME_USERID, user.getId() + "", Constants.COOKIE_MAX_AGE);
+		memcachedService.setWithType(user.getUserId() + "", user, User.class);
+		CookieHelper.addCookie(response, Constants.COOKIE_NAME_USERID, user.getUserId() + "", Constants.COOKIE_MAX_AGE);
 		CookieHelper.addCookie(response, Constants.COOKIE_NAME_PASSWORD, user.getPassword(), Constants.COOKIE_MAX_AGE);
 
-		jsonObject.put("code", LoginStatus.SUCCESS.getCode());
-		jsonObject.put("desc", LoginStatus.SUCCESS.getDesc());
+		jsonObject.put("code", LoginStatusEnum.SUCCESS.getCode());
+		jsonObject.put("desc", LoginStatusEnum.SUCCESS.getDesc());
 		return jsonObject.toString();
 	}
 

@@ -9,15 +9,14 @@ CREATE TABLE `users` (
   UNIQUE KEY `name_UNIQUE` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `diary`.`diaries` (
+CREATE TABLE `diaries` (
   `diary_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `user_id` BIGINT(20) NOT NULL,
   `title` VARCHAR(100) NOT NULL,
   `date` BIGINT(13) NOT NULL,
   `type` TINYINT(4) NOT NULL,
-  `weather` VARCHAR(10) NOT NULL,
-  `private` VARCHAR(10) NOT NULL,
-  `password` VARCHAR(45) NULL,
+  `weather` VARCHAR(20) NOT NULL,
+  `private_type` VARCHAR(10) NOT NULL,
   `content` TEXT NULL,
   `status` TINYINT(2) NULL DEFAULT 0 COMMENT '0代表正常，1代表删除',
   PRIMARY KEY (`diary_id`))

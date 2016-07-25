@@ -39,8 +39,8 @@
 		</mvc:message-converters>
 	</mvc:annotation-driven>
 
-	<!-- <bean name="printFunction" class="beetl.function.Print" />
-	<bean name="utcFormatFunction" class="beetl.function.UTCFormat" /> -->
+	<!-- <bean name="printFunction" class="beetl.function.Print" />  -->
+	<bean name="utcFormatFunction" class="beetl.function.UTCFormat" />
 	<bean name="beetlConfig" class="org.beetl.ext.spring.BeetlGroupUtilConfiguration"
 		init-method="init">
 		<property name="configFileResource" value="/WEB-INF/beetl.properties" />

@@ -25,7 +25,8 @@
     }
   </style>
   
-  <script type="text/javascript" src="${contextPath}/static/jquery-3.0.0.min.js"></script>
+  <!-- <script type="text/javascript" src="${contextPath}/static/jquery-3.0.0.min.js"></script> -->
+  <script src="${contextPath}/static/assets/js/jquery.min.js"></script>
 </head>
 <body>
 <div class="header">
@@ -92,7 +93,8 @@
 		    dataType:'json',
 		    success:function(data) {
 		    	console.log(data);
-		        if(data.code =='0' ){
+		    	data = eval("(" + data + ")");
+		        if(data.code == 0 ){
 		        	console.log('登录成功');
 		            window.location.href = 'mine'  
 		        }else{  

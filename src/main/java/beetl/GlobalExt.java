@@ -17,8 +17,9 @@ public class GlobalExt implements WebRenderExt {
 		template.binding("sysVersion", version);
 		
 		
-		//template.binding("contextPath", "/diary");
-		template.binding("contextPath", "");
+		template.binding("contextPath", "/diary");
+		//template.binding("contextPath", "");
+		template.binding("webName", "修行日记"); // 网站名
 	}
 
 }

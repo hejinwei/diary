@@ -35,10 +35,15 @@
 		</javaClientGenerator>
 
 		<!--表配置  -->
-		<table tableName="users" domainObjectName="User"
+		
+		
+		
+		<table tableName="diaries" domainObjectName="Diary"
 			enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false"
 			selectByExampleQueryId="false"></table>
+			
+		
 
 	</context>
 </generatorConfiguration>

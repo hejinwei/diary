@@ -48,7 +48,7 @@ public class UploadController {
 			Response qiniuResponse = uploadManager.put(file.getBytes(), fileName, qiniuToken);
 			System.out.println(qiniuResponse.bodyString());
 			
-			// TODO 返回url
+			// 返回url
 			response.getWriter().print(QINIU_PIC_URL_PREFIX + fileName);
 		} catch (QiniuException e) {
 			System.out.println(e.response.toString());

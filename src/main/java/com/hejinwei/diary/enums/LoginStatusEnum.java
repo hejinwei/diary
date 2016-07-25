@@ -1,6 +1,6 @@
 package com.hejinwei.diary.enums;
 
-public enum LoginStatus {
+public enum LoginStatusEnum {
 	
 	SUCCESS(0, "成功"),
 	
@@ -15,7 +15,7 @@ public enum LoginStatus {
 	
 	private String desc;
 
-	private LoginStatus(Integer code, String desc) {
+	private LoginStatusEnum(Integer code, String desc) {
 		this.code = code;
 		this.desc = desc;
 	}
