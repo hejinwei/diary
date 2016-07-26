@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.hejinwei.diary.util.FileUtil;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.UploadManager;
@@ -64,5 +65,32 @@ public class UploadController {
 		
 		return null;
 	}
+	
+	@RequestMapping("/ueditor/dispatch")
+	public void ueditorDispatch(HttpServletRequest request, HttpServletResponse response,
+            @RequestParam(value = "upfile", required=false) MultipartFile upfile,
+            @RequestParam(value = "action") String action) {
+    	
+    	response.setHeader("Content-Type" , "text/html");
+        
+    	try {
+    		switch (action) {
+    		case "config":
+    			String configPath = FileUtil.getUeditorConfigJsonPath();
+    			String content = FileUtil.readFile(configPath);
+    			
+    			content = content.replaceAll("/\\*.*\\*/", "");
+    			response.getWriter().print(content);
+    			break;
+
+    		default:
+    			break;
+    		}
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    	
+    }
 
 }

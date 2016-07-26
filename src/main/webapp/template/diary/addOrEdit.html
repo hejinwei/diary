@@ -1,0 +1,66 @@
+<% var pageLevelCSS = { %> <%};%> <% var pageLevelJS = { %>
+
+<script type="text/javascript" charset="utf-8" src="${contextPath}/static/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="${contextPath}/static/ueditor/ueditor.all.min.js"> </script>
+
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+
+	});
+	
+	function changePrivateType() {}
+	
+</script>
+
+<%};%> 
+
+
+<% var layoutParas =
+{"pageLevelCSS":pageLevelCSS,"pageLevelJS":pageLevelJS};
+layout("/template/layout/profileLayout.html", layoutParas){ %>
+
+<div class="am-u-md-8">
+    <form action="">
+    	<input type="text" id="title" name="title">标题
+    	
+    	<br>
+    	
+    	<select id="type" name="type">
+    		<% for (diaryTypeEnum in diaryTypeEnums){ %>
+					
+					<option value="${diaryTypeEnum.type}">${diaryTypeEnum.desc}</option>
+
+		    <% } %>
+    	</select>
+    	
+    	<br>
+    	
+    	<select id="weather" name="weather">
+    		<% for (weatherEnum in weatherEnums){ %>
+					
+					<option value="${diaryTypeEnum.code}">${diaryTypeEnum.desc}</option>
+
+		    <% } %>
+    	</select>
+    	
+    	<br>
+    	
+    	<select id="privateType" name="privateType" onchange="changePrivateType()">
+    		<% for (privateTypeEnum in privateTypeEnums){ %>
+					
+					<option value="${diaryTypeEnum.code}">${diaryTypeEnum.desc}</option>
+
+		    <% } %>
+    	</select>
+    	
+    	<input type="password" name="password">密码
+    	
+    	<br>
+    	
+    	<script id="editor" type="text/plain" style="width:1024px;height:500px;"></script>
+    	
+    </form>
+</div>
+
+
+<%} %>

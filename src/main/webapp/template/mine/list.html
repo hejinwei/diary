@@ -10,6 +10,11 @@
 		window.location.href = "mine?type=" + type;
 	}
 	
+	function submitPage(pageNum, pageSize) {
+		var type = $('#selectType').val();
+		window.location.href = "mine?type=" + type + "&pageNum=" + pageNum;
+	}
+	
 </script>
 
 <%};%> 
