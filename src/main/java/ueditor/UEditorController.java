@@ -19,7 +19,16 @@ public class UEditorController {
     public void dispatch(HttpServletRequest request, HttpServletResponse response,
             @RequestParam(value = "upfile", required=false) MultipartFile upfile,
             @RequestParam(value = "action") String action) {
-        //
+        
+    	switch (action) {
+		case "config":
+			
+			break;
+
+		default:
+			break;
+		}
+    	
     }
 
 }
