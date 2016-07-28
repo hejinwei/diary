@@ -46,8 +46,8 @@
 		<property name="configFileResource" value="/WEB-INF/beetl.properties" />
 		<property name="functions">
 			<map>
-				<!-- <entry key="printFunction" value-ref="printFunction" />
-				<entry key="utcFormatFunction" value-ref="utcFormatFunction" /> -->
+				<!-- <entry key="printFunction" value-ref="printFunction" />  -->
+				<entry key="utcFormatFunction" value-ref="utcFormatFunction" />
 			</map>
 		</property>
 	</bean>

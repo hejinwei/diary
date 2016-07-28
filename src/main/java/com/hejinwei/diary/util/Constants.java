@@ -8,5 +8,9 @@ public class Constants {
 	public static final String COOKIE_NAME_PASSWORD = "password";
 	
 	public static final Integer DEFAULT_PAGE_SIZE = 20;
+	
+	public static final String contextPath = "/diary";
+	
+	public static final Byte DIARY_DELETE_STATUS = (byte)1;
 
 }

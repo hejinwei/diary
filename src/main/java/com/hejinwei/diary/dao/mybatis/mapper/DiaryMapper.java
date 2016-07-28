@@ -60,5 +60,7 @@ public interface DiaryMapper {
 	
 	List<Diary> selectDiaryPageForProfile(@Param("userId") Long userId, @Param("type") Byte type,
 			@Param("startIndex") Integer startIndex, @Param("pageSize") Integer pageSize);
+	
+	void updateDeleteStatus(@Param("diaryId") Long diaryId, @Param("status") Byte status);
     
 }

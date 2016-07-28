@@ -12,7 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hejinwei.diary.util.FileUtil;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
@@ -43,14 +45,15 @@ public class UploadController {
 		
 		System.out.println("上传图片：" + file.getOriginalFilename());
 		
-		String fileName = imageType + "/" + sdf.format(new Date()) + "/" + UUID.randomUUID() + ".jpg";
+		String filename = imageType + "/" + sdf.format(new Date()) + "/" + UUID.randomUUID() 
+			+ FileUtil.getFilenameSuffix(file.getOriginalFilename());
 		
 		try {
-			Response qiniuResponse = uploadManager.put(file.getBytes(), fileName, qiniuToken);
+			Response qiniuResponse = uploadManager.put(file.getBytes(), filename, qiniuToken);
 			System.out.println(qiniuResponse.bodyString());
 			
 			// 返回url
-			response.getWriter().print(QINIU_PIC_URL_PREFIX + fileName);
+			response.getWriter().print(QINIU_PIC_URL_PREFIX + filename);
 		} catch (QiniuException e) {
 			System.out.println(e.response.toString());
 			try {
@@ -68,7 +71,7 @@ public class UploadController {
 	
 	@RequestMapping("/ueditor/dispatch")
 	public void ueditorDispatch(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam(value = "upfile", required=false) MultipartFile upfile,
+            //@RequestParam(value = "upfile", required=false) MultipartFile upfile,
             @RequestParam(value = "action") String action) {
     	
     	response.setHeader("Content-Type" , "text/html");
@@ -76,7 +79,7 @@ public class UploadController {
     	try {
     		switch (action) {
     		case "config":
-    			String configPath = FileUtil.getUeditorConfigJsonPath();
+    			String configPath = FileUtil.getUeditorConfigJsonPath(request);
     			String content = FileUtil.readFile(configPath);
     			
     			content = content.replaceAll("/\\*.*\\*/", "");
@@ -84,6 +87,15 @@ public class UploadController {
     			break;
 
     		default:
+    			MultipartFile file = ((MultipartHttpServletRequest)request).getFile("upfile");
+    			String filename = "200/" + sdf.format(new Date()) + "/" + UUID.randomUUID() 
+    				+ FileUtil.getFilenameSuffix(file.getOriginalFilename());
+    			Response qiniuResponse = uploadManager.put(file.getBytes(), filename, qiniuToken);
+    			System.out.println(qiniuResponse.bodyString());
+    			
+    			String url = QINIU_PIC_URL_PREFIX + filename;
+    			JSONObject jsonObject = constructUeditorReturnJson(url, filename, file.getSize());
+    			response.getWriter().print(jsonObject.toString());
     			break;
     		}
     	} catch (Exception e) {
@@ -92,5 +104,16 @@ public class UploadController {
     	
     	
     }
+	
+	private JSONObject constructUeditorReturnJson(String url, String filename, long fileSize) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("state", "SUCCESS");
+		jsonObject.put("url", url);
+		jsonObject.put("title", filename);
+		jsonObject.put("original", filename);
+		jsonObject.put("type", FileUtil.getFilenameSuffix(filename));
+		jsonObject.put("size", fileSize);
+		return jsonObject;
+	}
 
 }

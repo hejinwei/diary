@@ -1,5 +1,6 @@
 package com.hejinwei.diary.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
@@ -8,9 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hejinwei.diary.dao.mybatis.model.Diary;
 import com.hejinwei.diary.enums.DiaryTypeEnum;
 import com.hejinwei.diary.enums.PrivateTypeEnum;
@@ -42,7 +46,7 @@ public class MineController {
 
 		Cookie userIdCookie = CookieHelper.getCookieByName(request, Constants.COOKIE_NAME_USERID);
 		if (userIdCookie == null || userIdCookie.getValue() == null) {
-			mav = new ModelAndView("login");
+			mav = new ModelAndView(Constants.contextPath + "/login");
 			return mav;
 		}
 
@@ -81,6 +85,37 @@ public class MineController {
 		mav.addObject("privateTypeEnums", PrivateTypeEnum.values());
 
 		return mav;
+	}
+	
+	@RequestMapping(value = "/mine/doAddDiary", method = RequestMethod.POST)
+	@ResponseBody
+	public String doAddDiary(HttpServletRequest request, Diary diary) {
+		
+		JSONObject jsonObject = new JSONObject();
+		
+		try {
+			Cookie userIdCookie = CookieHelper.getCookieByName(request, Constants.COOKIE_NAME_USERID);
+			if (userIdCookie == null || userIdCookie.getValue() == null) {
+				jsonObject.put("code", 1);
+				jsonObject.put("message", "请登录");
+				return jsonObject.toString();
+			}
+			
+			diary.setDate(new Date().getTime());
+			diary.setUserId(Long.parseLong(userIdCookie.getValue()));
+			
+			diaryService.addDiary(diary);
+			
+			jsonObject.put("code", 0);
+			jsonObject.put("message", "保存成功");
+			return jsonObject.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("code", 99);
+			jsonObject.put("message", "系统异常");
+			return jsonObject.toString();
+		}
+		
 	}
 
 }

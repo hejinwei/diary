@@ -7,6 +7,8 @@ import org.beetl.core.GroupTemplate;
 import org.beetl.core.Template;
 import org.beetl.ext.web.WebRenderExt;
 
+import com.hejinwei.diary.util.Constants;
+
 public class GlobalExt implements WebRenderExt {
 
 	static long version = System.currentTimeMillis();
@@ -16,9 +18,7 @@ public class GlobalExt implements WebRenderExt {
 		// js,css 的版本编号
 		template.binding("sysVersion", version);
 		
-		
-		template.binding("contextPath", "/diary");
-		//template.binding("contextPath", "");
+		template.binding("contextPath", Constants.contextPath);
 		template.binding("webName", "修行日记"); // 网站名
 	}
 

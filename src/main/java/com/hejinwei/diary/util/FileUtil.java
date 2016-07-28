@@ -3,20 +3,27 @@ package com.hejinwei.diary.util;
 import java.io.File;
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.io.FileUtils;
 
 public class FileUtil {
 	
-	public static String getProjectPath() {
-		return System.getProperty("user.dir");
+	public static String getFilePath(HttpServletRequest request, String path) {
+		return request.getSession().getServletContext().getRealPath(path);
 	}
 	
-	public static String getUeditorConfigJsonPath() {
-		String projectPath = getProjectPath();
-		return projectPath + File.separator + "src" + File.separator + "main"
-				+ File.separator + "webapp" + File.separator + "static"
-				+ File.separator + "ueditor" + File.separator + "jsp" 
-				+ File.separator + "config.json";
+	public static String getUeditorConfigJsonPath(HttpServletRequest request) {
+		return getFilePath(request, "/static/ueditor/jsp/config.json");
+	}
+	
+	/**
+	 * 如"aaa.jpg"返回".jpg"
+	 * @param filename
+	 * @return
+	 */
+	public static String getFilenameSuffix(String filename) {
+		return filename.substring(filename.lastIndexOf(".")).toLowerCase();
 	}
 	
 	public static String readFile(String path) {
@@ -32,11 +39,8 @@ public class FileUtil {
 	}
 	
 	public static void main(String[] args) {
-		String configPath = getUeditorConfigJsonPath();
-		String content = readFile(configPath);
-		
-		content = content.replaceAll("/\\*.*\\*/", "");
-		System.out.println(content);
+		String filename = "aaa.jpg";
+		System.out.println(getFilenameSuffix(filename));
 	}
 
 }

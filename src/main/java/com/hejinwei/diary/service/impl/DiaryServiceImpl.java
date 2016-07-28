@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.hejinwei.diary.dao.mybatis.mapper.DiaryMapper;
 import com.hejinwei.diary.dao.mybatis.model.Diary;
 import com.hejinwei.diary.service.DiaryService;
+import com.hejinwei.diary.util.Constants;
 
 @Service
 public class DiaryServiceImpl implements DiaryService {
@@ -35,6 +36,16 @@ public class DiaryServiceImpl implements DiaryService {
 	@Override
 	public int findDiaryCountForProfile(Long userId, Byte type) {
 		return diaryMapper.selectDiaryCountForProfile(userId, type);
+	}
+
+	@Override
+	public int addDiary(Diary diary) {
+		return diaryMapper.insertSelective(diary);
+	}
+
+	@Override
+	public void deleteDiary(Long diaryId) {
+		diaryMapper.updateDeleteStatus(diaryId, Constants.DIARY_DELETE_STATUS);
 	}
 
 

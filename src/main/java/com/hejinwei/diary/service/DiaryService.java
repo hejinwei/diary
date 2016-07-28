@@ -14,4 +14,8 @@ public interface DiaryService {
 	
 	List<Diary> findDiaryPageForProfile(Long userId, Byte type, Integer pageNum, Integer pageSize);
 	
+	int addDiary(Diary diary);
+	
+	void deleteDiary(Long diaryId);
+	
 }

@@ -252,4 +252,10 @@
     limit #{startIndex}, #{pageSize}
   </select>
   
+  <update id="updateDeleteStatus">
+  	update diaries
+  	set status = #{status}
+  	where diary_id = #{diaryId}
+  </update>
+  
 </mapper>
