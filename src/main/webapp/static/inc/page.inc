@@ -4,8 +4,7 @@
 
 <script>
  function preSubmit(pageNum) {
- 	var pageSize = document.getElementById("selectedPageSize").value;
- 	submitPage(pageNum, pageSize);
+ 	submitPage(pageNum);
  }
 </script>
 

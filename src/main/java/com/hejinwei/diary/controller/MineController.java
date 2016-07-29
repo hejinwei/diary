@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hejinwei.diary.dao.mybatis.model.Diary;
+import com.hejinwei.diary.dao.mybatis.model.DiaryPassword;
 import com.hejinwei.diary.enums.DiaryTypeEnum;
 import com.hejinwei.diary.enums.PrivateTypeEnum;
 import com.hejinwei.diary.enums.WeatherEnum;
@@ -83,8 +85,61 @@ public class MineController {
 		mav.addObject("diaryTypeEnums", DiaryTypeEnum.values());
 		mav.addObject("weatherEnums", WeatherEnum.values());
 		mav.addObject("privateTypeEnums", PrivateTypeEnum.values());
+		mav.addObject("diary", null);
 
 		return mav;
+	}
+	
+	@RequestMapping("/mine/editDiary/{diaryId}")
+	public ModelAndView editDiary(@PathVariable("diaryId") Long diaryId) {
+		ModelAndView mav = new ModelAndView("template/diary/addOrEdit");
+		
+		Diary diary = diaryService.findDiary(diaryId);
+		mav.addObject("diary", diary);
+
+		mav.addObject("diaryTypeEnums", DiaryTypeEnum.values());
+		mav.addObject("weatherEnums", WeatherEnum.values());
+		mav.addObject("privateTypeEnums", PrivateTypeEnum.values());
+
+		return mav;
+	}
+	
+	@RequestMapping(value = "/mine/doDeleteDiary/{diaryId}", method = RequestMethod.POST)
+	@ResponseBody
+	public String doDelete(@PathVariable("diaryId") Long diaryId) {
+		diaryService.deleteDiary(diaryId);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("code", 0);
+		jsonObject.put("message", "删除成功");
+		return jsonObject.toString();
+	}
+	
+	@RequestMapping(value = "/mine/doEditDiary", method = RequestMethod.POST)
+	@ResponseBody
+	public String doEditDiary(HttpServletRequest request, Diary diary) {
+
+		JSONObject jsonObject = new JSONObject();
+
+		try {
+			diaryService.editDiary(diary);
+			
+			if ( PrivateTypeEnum.PROTECTED.getCode().equals(diary.getPrivateType()) ) {
+				DiaryPassword diaryPassword = new DiaryPassword();
+				diaryPassword.setDiaryId(diary.getDiaryId());
+				diaryPassword.setPassword(request.getParameter("password"));
+				diaryService.addOrEditPassword(diaryPassword);
+			}
+			
+			jsonObject.put("code", 0);
+			jsonObject.put("message", "保存成功");
+			return jsonObject.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("code", 99);
+			jsonObject.put("message", "系统异常");
+			return jsonObject.toString();
+		}
+
 	}
 	
 	@RequestMapping(value = "/mine/doAddDiary", method = RequestMethod.POST)
@@ -105,6 +160,13 @@ public class MineController {
 			diary.setUserId(Long.parseLong(userIdCookie.getValue()));
 			
 			diaryService.addDiary(diary);
+			
+			if (PrivateTypeEnum.PROTECTED.getCode().equals(diary.getPrivateType())) {
+				DiaryPassword diaryPassword = new DiaryPassword();
+				diaryPassword.setDiaryId(diary.getDiaryId());
+				diaryPassword.setPassword(request.getParameter("password"));
+				diaryService.addOrEditPassword(diaryPassword);
+			}
 			
 			jsonObject.put("code", 0);
 			jsonObject.put("message", "保存成功");

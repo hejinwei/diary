@@ -5,50 +5,58 @@
 
 <script type="text/javascript">
 
-
-	UE.getEditor('myEditor', {
-		//这里可以选择自己需要的工具按钮名称,此处仅选择如下五个
-		//toolbars:[['FullScreen', 'Source', 'Undo', 'Redo','Bold','test']],
-		
-		toolbars: [[
-            'fullscreen', 'source', '|', 'undo', 'redo', '|',
-            'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 
-            'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
-            'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
-            'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
-            'directionalityltr', 'directionalityrtl', 'indent', '|',
-            'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 
-            'touppercase', 'tolowercase', '|',
-            'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|',
-            'simpleupload', 
-            //'insertimage', 
-            'emotion', 
-            //'scrawl', 'insertvideo', 'music', 'attachment', 'map', 'gmap', 'insertframe', 'insertcode', 'webapp', 
-            'pagebreak', 'template', 'background', '|',
-            'horizontal', 'date', 'time', 'spechars', '|',
-            //'snapscreen', 'wordimage', 
-            'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
-            //'print', 'preview', 
-            'searchreplace', 
-            //'drafts', 
-            'help'
-        ]],
-		
-		//focus时自动清空初始化时的内容
-		autoClearinitialContent : true,
-		//关闭字数统计
-		wordCount : false,
-		//关闭elementPath
-		elementPathEnabled : false,
-		//默认的编辑区域高度
-		initialFrameHeight : 300,
-		// 上传请求地址:
-		serverUrl : "${contextPath}/ueditor/dispatch"
-	//更多其他参数，请参考ueditor.config.js中的配置项
-	})
-
 	jQuery(document).ready(function() {
+		
+		UE.getEditor('myEditor', {
+			//这里可以选择自己需要的工具按钮名称,此处仅选择如下五个
+			//toolbars:[['FullScreen', 'Source', 'Undo', 'Redo','Bold','test']],
+			
+			toolbars: [[
+	            'fullscreen', 'source', '|', 'undo', 'redo', '|',
+	            'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 
+	            'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
+	            'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
+	            'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
+	            'directionalityltr', 'directionalityrtl', 'indent', '|',
+	            'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 
+	            'touppercase', 'tolowercase', '|',
+	            'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|',
+	            'simpleupload', 
+	            //'insertimage', 
+	            'emotion', 
+	            //'scrawl', 'insertvideo', 'music', 'attachment', 'map', 'gmap', 'insertframe', 'insertcode', 'webapp', 
+	            'pagebreak', 'template', 'background', '|',
+	            'horizontal', 'date', 'time', 'spechars', '|',
+	            //'snapscreen', 'wordimage', 
+	            'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
+	            //'print', 'preview', 
+	            'searchreplace', 
+	            //'drafts', 
+	            'help'
+	        ]],
+			
+			//focus时自动清空初始化时的内容
+			autoClearinitialContent : true,
+			//关闭字数统计
+			wordCount : false,
+			//关闭elementPath
+			elementPathEnabled : false,
+			//默认的编辑区域高度
+			initialFrameHeight : 300,
+			// 上传请求地址:
+			serverUrl : "${contextPath}/ueditor/dispatch"
+		//更多其他参数，请参考ueditor.config.js中的配置项
+		})
+		
+		if ('${diary.content!}' != '') {
+			var ueditor = UE.getEditor('myEditor');
+			ueditor.addListener("ready", function () {
+		        // editor准备好之后才可以使用
+		        console.log("ueditor is ready");
+		        ueditor.setContent('${diary.content!}');
 
+		});
+		}
 	});
 
 	function changePrivateType() {
@@ -65,41 +73,53 @@
 		history.back();
 	}
 	
-	function save() {
-		
+	function preCheck() {
 		var title = $.trim($('#title').val());
 		
 		if (title == '') {
 			alert("标题不能为空");
 			$('#title').focus();
-			return;
+			return false;
 		}
 		
-		var type = $('#type').val();
-		var weather = $('#weather').val();
 		var privateType = $('#privateType').val();
 		var password = $.trim($('#password').val());
 		
 		if (privateType == 'PROTECTED' && password == '' ) {
 			alert("当前私密类型必须输入密码(不能含空格)");
 			$('#password').focus();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	function editSave() {
+		var checked = preCheck();
+		if (!checked) {
 			return;
 		}
+		
+		var title = $.trim($('#title').val());
+		var type = $('#type').val();
+		var weather = $('#weather').val();
+		var privateType = $('#privateType').val();
+		var password = $.trim($('#password').val());
 		
 		var content = UE.getEditor('myEditor').getContent();
 		
 		 $.ajax({
-			 	cache:false,
 	            //提交数据的类型 POST GET
 	            type:"POST",
 	            //提交的网址
-	            url:"${contextPath}/mine/doAddDiary",
+	            url:"${contextPath}/mine/doEditDiary",
 	            //提交的数据
-	            data:{title:title, type:type, weather:weather, privateType:privateType, password:password},
+	            data:{diaryId:'${diary.diaryId!}', title:title, type:type, weather:weather, privateType:privateType, password:password, content:content},
 	            //返回数据的格式
-	            datatype: "json",//"xml", "html", "script", "json", "jsonp", "text".
+	            dataType: "json",//"xml", "html", "script", "json", "jsonp", "text".
 	            //成功返回之后调用的函数             
 	            success:function(data){
+	            	console.log("success函数");
 	           		data = eval('(' + data + ')');
 	           		alert(data.message);
 	           		if (data.code == 0) {
@@ -110,6 +130,49 @@
 	            //调用出错执行的函数
 	            error: function(){
 	                //请求出错处理
+	            	console.log("error函数");
+	            }         
+	         });
+	}
+	
+	function save() {
+		
+		var checked = preCheck();
+		if (!checked) {
+			return;
+		}
+		
+		var title = $.trim($('#title').val());
+		var type = $('#type').val();
+		var weather = $('#weather').val();
+		var privateType = $('#privateType').val();
+		var password = $.trim($('#password').val());
+		
+		var content = UE.getEditor('myEditor').getContent();
+		
+		 $.ajax({
+	            //提交数据的类型 POST GET
+	            type:"POST",
+	            //提交的网址
+	            url:"${contextPath}/mine/doAddDiary",
+	            //提交的数据
+	            data:{title:title, type:type, weather:weather, privateType:privateType, password:password, content:content},
+	            //返回数据的格式
+	            dataType: "json",//"xml", "html", "script", "json", "jsonp", "text".
+	            //成功返回之后调用的函数             
+	            success:function(data){
+	            	console.log("success函数");
+	           		data = eval('(' + data + ')');
+	           		alert(data.message);
+	           		if (data.code == 0) {
+	           			window.location.href = "${contextPath}/mine";
+	           		}
+	            },
+	           
+	            //调用出错执行的函数
+	            error: function(){
+	                //请求出错处理
+	            	console.log("error函数");
 	            }         
 	         });
 	}
@@ -127,37 +190,43 @@ layout("/template/layout/profileLayout.html", layoutParas){ %>
     <form class="am-form" action="javascript:void(0)">
     
     	<label for="title">标题:</label>
-    	<input type="text" id="title" name="title">
+    	<input type="text" id="title" name="title" value="${diary.title!}">
     	
     	<label for="type">类型:</label>
     	<select id="type" name="type">
     		<% for (diaryTypeEnum in diaryTypeEnums){ %>
-					
-					<option value="${diaryTypeEnum.type}">${diaryTypeEnum.desc}</option>
-
+					<% if (diary != null && diary.type == diaryTypeEnum.type) { %>
+						<option value="${diaryTypeEnum.type}" selected="selected">${diaryTypeEnum.desc}</option>
+					<% } else { %>
+						<option value="${diaryTypeEnum.type}">${diaryTypeEnum.desc}</option>
+					<% } %>
 		    <% } %>
     	</select>
     	
     	<label for="weather">天气:</label>
     	<select id="weather" name="weather">
     		<% for (weatherEnum in weatherEnums){ %>
-					
-					<option value="${weatherEnum.code}">${weatherEnum.desc}</option>
-
+    				<% if (diary != null && diary.weather == weatherEnum.code) { %>
+						<option value="${weatherEnum.code}" selected="selected">${weatherEnum.desc}</option>
+					<% } else { %>
+						<option value="${weatherEnum.code}">${weatherEnum.desc}</option>
+					<% } %>
 		    <% } %>
     	</select>
     	
     	<label for="privateType">私密性:</label>
     	<select id="privateType" name="privateType" onchange="changePrivateType()">
     		<% for (privateTypeEnum in privateTypeEnums){ %>
-					
-					<option value="${privateTypeEnum.code}">${privateTypeEnum.desc}</option>
-
+    				<% if (diary != null && diary.privateType == privateTypeEnum.code) { %>
+						<option value="${privateTypeEnum.code}" selected="selected">${privateTypeEnum.desc}</option>
+					<% } else { %>
+						<option value="${privateTypeEnum.code}">${privateTypeEnum.desc}</option>
+					<% } %>
 		    <% } %>
     	</select>
     	
 		<label for="password">密码:</label>    	
-    	<input id="password" type="password" name="password" disabled="disabled">
+    	<input id="password" type="password" name="password" disabled="disabled" value="${diaryPassword.password!}">
     	
     	<br>
     	
@@ -171,9 +240,13 @@ layout("/template/layout/profileLayout.html", layoutParas){ %>
 	
 	<br>
 	
-	<button type="button" onclick="save()">保存</button>
+	<% if (diary == null) { %>
+		<button type="button" class="am-btn am-btn-success" onclick="save()">保存</button>
+	<% } else { %>
+		<button type="button" class="am-btn am-btn-success" onclick="editSave()">保存</button>
+	<% } %>
 	
-	<button type="button" onclick="goBack()">返回</button>
+	<button type="button" class="am-btn am-btn-default" onclick="goBack()">返回</button>
 	
 </div>
 

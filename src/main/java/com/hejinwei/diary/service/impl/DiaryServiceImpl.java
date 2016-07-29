@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hejinwei.diary.dao.mybatis.mapper.DiaryMapper;
+import com.hejinwei.diary.dao.mybatis.mapper.DiaryPasswordMapper;
 import com.hejinwei.diary.dao.mybatis.model.Diary;
+import com.hejinwei.diary.dao.mybatis.model.DiaryPassword;
 import com.hejinwei.diary.service.DiaryService;
 import com.hejinwei.diary.util.Constants;
 
@@ -15,6 +17,9 @@ public class DiaryServiceImpl implements DiaryService {
 	
 	@Autowired
 	private DiaryMapper diaryMapper;
+	
+	@Autowired
+	private DiaryPasswordMapper diaryPasswordMapper;
 
 	@Override
 	public List<Diary> findDiaryPage(Long userId, Byte type, Integer pageNum, Integer pageSize) {
@@ -46,6 +51,21 @@ public class DiaryServiceImpl implements DiaryService {
 	@Override
 	public void deleteDiary(Long diaryId) {
 		diaryMapper.updateDeleteStatus(diaryId, Constants.DIARY_DELETE_STATUS);
+	}
+
+	@Override
+	public Diary findDiary(Long diaryId) {
+		return diaryMapper.selectByPrimaryKey(diaryId);
+	}
+
+	@Override
+	public void editDiary(Diary diary) {
+		diaryMapper.updateByPrimaryKeySelective(diary);
+	}
+
+	@Override
+	public void addOrEditPassword(DiaryPassword diaryPassword) {
+		diaryPasswordMapper.insertOrUpdate(diaryPassword);
 	}
 
 
