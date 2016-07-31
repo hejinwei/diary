@@ -258,5 +258,9 @@
   	set status = #{status}
   	where diary_id = #{diaryId}
   </update>
+
+  <select id="selectUserIdByDiaryId" resultType="java.lang.Long">
+    select user_id from diaries where diary_id = #{diaryId}
+  </select>
   
 </mapper>

@@ -1,6 +1,7 @@
 package com.hejinwei.diary.dao.mybatis.mapper;
 
 import com.hejinwei.diary.dao.mybatis.model.Statistic;
+import org.apache.ibatis.annotations.Param;
 
 public interface StatisticMapper {
     /**
@@ -50,4 +51,6 @@ public interface StatisticMapper {
      * @mbggenerated Mon Jul 25 09:57:21 CST 2016
      */
     int updateByPrimaryKey(Statistic record);
+
+    void insertOrAddViewNumber(@Param("diaryId") Long diaryId, @Param("userId") Long userId);
 }

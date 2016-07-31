@@ -24,5 +24,13 @@ public interface DiaryService {
 	void editDiary(Diary diary);
 	
 	void addOrEditPassword(DiaryPassword diaryPassword);
+
+	void editPasswordStatus(Long diaryId, Byte status);
+
+	Long findUserIdByDiaryId(Long diaryId);
+
+	String findPassword(Long diaryId);
+
+	List<Diary> findTop5(Long userId);
 	
 }

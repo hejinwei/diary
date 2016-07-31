@@ -130,4 +130,11 @@
       like_number = #{likeNumber,jdbcType=INTEGER}
     where diary_id = #{diaryId,jdbcType=BIGINT}
   </update>
+
+  <insert id="insertOrAddViewNumber">
+    insert into statistics (diary_id, user_id, view_number)
+    VALUES (#{diaryId}, #{userId}, 1)
+    on duplicate key update view_number=view_number+1
+
+  </insert>
 </mapper>

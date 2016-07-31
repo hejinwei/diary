@@ -9,8 +9,9 @@ public class Constants {
 	
 	public static final Integer DEFAULT_PAGE_SIZE = 5;
 	
-	public static final String contextPath = "/diary";
+//	public static final String contextPath = "/diary";
+	public static final String contextPath = "";
 	
-	public static final Byte DIARY_DELETE_STATUS = (byte)1;
+	public static final Byte DELETE_STATUS = (byte)1;
 
 }

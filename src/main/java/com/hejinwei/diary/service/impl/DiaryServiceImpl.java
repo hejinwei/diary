@@ -50,7 +50,7 @@ public class DiaryServiceImpl implements DiaryService {
 
 	@Override
 	public void deleteDiary(Long diaryId) {
-		diaryMapper.updateDeleteStatus(diaryId, Constants.DIARY_DELETE_STATUS);
+		diaryMapper.updateDeleteStatus(diaryId, Constants.DELETE_STATUS);
 	}
 
 	@Override
@@ -66,6 +66,26 @@ public class DiaryServiceImpl implements DiaryService {
 	@Override
 	public void addOrEditPassword(DiaryPassword diaryPassword) {
 		diaryPasswordMapper.insertOrUpdate(diaryPassword);
+	}
+
+	@Override
+	public void editPasswordStatus(Long diaryId, Byte status) {
+		diaryPasswordMapper.updatePasswordStatus(diaryId, status);
+	}
+
+	@Override
+	public Long findUserIdByDiaryId(Long diaryId) {
+		return diaryMapper.selectUserIdByDiaryId(diaryId);
+	}
+
+	@Override
+	public String findPassword(Long diaryId) {
+		return diaryPasswordMapper.selectPassword(diaryId);
+	}
+
+	@Override
+	public List<Diary> findTop5(Long userId) {
+		return null;
 	}
 
 

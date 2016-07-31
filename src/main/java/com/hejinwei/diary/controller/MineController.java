@@ -91,10 +91,21 @@ public class MineController {
 	}
 	
 	@RequestMapping("/mine/editDiary/{diaryId}")
-	public ModelAndView editDiary(@PathVariable("diaryId") Long diaryId) {
+	public ModelAndView editDiary(HttpServletRequest request, @PathVariable("diaryId") Long diaryId) {
 		ModelAndView mav = new ModelAndView("template/diary/addOrEdit");
 		
 		Diary diary = diaryService.findDiary(diaryId);
+
+		Cookie userIdCookie = CookieHelper.getCookieByName(request, Constants.COOKIE_NAME_USERID);
+		if (userIdCookie == null || userIdCookie.getValue() == null) {
+			mav = new ModelAndView(Constants.contextPath + "/login");
+			return mav;
+		}
+
+		if (diary.getUserId() != Long.parseLong(userIdCookie.getValue())) {
+			throw new RuntimeException("当前日记不属于你");
+		}
+
 		mav.addObject("diary", diary);
 
 		mav.addObject("diaryTypeEnums", DiaryTypeEnum.values());
@@ -106,9 +117,24 @@ public class MineController {
 	
 	@RequestMapping(value = "/mine/doDeleteDiary/{diaryId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String doDelete(@PathVariable("diaryId") Long diaryId) {
-		diaryService.deleteDiary(diaryId);
+	public String doDelete(HttpServletRequest request, @PathVariable("diaryId") Long diaryId) {
+
 		JSONObject jsonObject = new JSONObject();
+
+		Cookie userIdCookie = CookieHelper.getCookieByName(request, Constants.COOKIE_NAME_USERID);
+		if (userIdCookie == null || userIdCookie.getValue() == null) {
+			jsonObject.put("code", 1);
+			jsonObject.put("message", "请重新登录");
+			return jsonObject.toString();
+		}
+
+		Diary diary = diaryService.findDiary(diaryId);
+		if (diary.getUserId() != Long.parseLong(userIdCookie.getValue())) {
+			throw new RuntimeException("当前日记不属于你");
+		}
+
+		diaryService.deleteDiary(diaryId);
+
 		jsonObject.put("code", 0);
 		jsonObject.put("message", "删除成功");
 		return jsonObject.toString();
@@ -120,15 +146,27 @@ public class MineController {
 
 		JSONObject jsonObject = new JSONObject();
 
+		Cookie userIdCookie = CookieHelper.getCookieByName(request, Constants.COOKIE_NAME_USERID);
+		if (userIdCookie == null || userIdCookie.getValue() == null) {
+			jsonObject.put("code", 1);
+			jsonObject.put("message", "请重新登录");
+			return jsonObject.toString();
+		}
+
 		try {
-			diaryService.editDiary(diary);
-			
 			if ( PrivateTypeEnum.PROTECTED.getCode().equals(diary.getPrivateType()) ) {
 				DiaryPassword diaryPassword = new DiaryPassword();
 				diaryPassword.setDiaryId(diary.getDiaryId());
 				diaryPassword.setPassword(request.getParameter("password"));
 				diaryService.addOrEditPassword(diaryPassword);
+			} else {
+				Diary oldDiary = diaryService.findDiary(diary.getDiaryId());
+				if ( PrivateTypeEnum.PROTECTED.getCode().equals(oldDiary.getPrivateType()) ) {
+					diaryService.editPasswordStatus(diary.getDiaryId(), Constants.DELETE_STATUS);
+				}
 			}
+
+			diaryService.editDiary(diary);
 			
 			jsonObject.put("code", 0);
 			jsonObject.put("message", "保存成功");

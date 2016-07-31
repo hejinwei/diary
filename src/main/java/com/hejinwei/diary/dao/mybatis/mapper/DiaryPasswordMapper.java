@@ -1,6 +1,7 @@
 package com.hejinwei.diary.dao.mybatis.mapper;
 
 import com.hejinwei.diary.dao.mybatis.model.DiaryPassword;
+import org.apache.ibatis.annotations.Param;
 
 public interface DiaryPasswordMapper {
     /**
@@ -52,4 +53,8 @@ public interface DiaryPasswordMapper {
     int updateByPrimaryKey(DiaryPassword record);
     
     void insertOrUpdate(DiaryPassword diaryPassword);
+
+    void updatePasswordStatus(@Param("diaryId") Long diaryId, @Param("status") Byte status);
+
+    String selectPassword(@Param("diaryId") Long diaryId);
 }

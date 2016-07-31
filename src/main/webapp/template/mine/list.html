@@ -129,7 +129,7 @@ layout("/template/layout/mineLayout.html", layoutParas){ %>
 							<td>${diary.diaryId}</td>
 							<td><a href="#">${diary.title}</a></td>
 							<td class="am-hide-sm-only">${diaryTypeMap[diary.type]}</td>
-							<td><% utcFormatFunction(diary.date, 'yyyy年MM月dd日'); %></td>
+							<td><% utcFormatFunction(diary.date, 'yyyy-MM-dd'); %></td>
 							<td class="am-hide-sm-only">${weatherMap[diary.weather]}</td>
 							<td class="am-hide-sm-only">${privateTypeMap[diary.privateType]}</td>
 							<td>
