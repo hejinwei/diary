@@ -7,11 +7,13 @@ public class Constants {
 	public static final String COOKIE_NAME_USERID = "userId";
 	public static final String COOKIE_NAME_PASSWORD = "password";
 	
-	public static final Integer DEFAULT_PAGE_SIZE = 5;
+	public static final Integer DEFAULT_PAGE_SIZE = 20;
 	
-//	public static final String contextPath = "/diary";
-	public static final String contextPath = "";
+	public static final String contextPath = "/diary";
+//	public static final String contextPath = "";
 	
 	public static final Byte DELETE_STATUS = (byte)1;
+	
+	public static final Integer TOP_NUMBER = 5;
 
 }

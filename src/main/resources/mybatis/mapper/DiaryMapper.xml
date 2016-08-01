@@ -263,4 +263,11 @@
     select user_id from diaries where diary_id = #{diaryId}
   </select>
   
+  <select id="selectTopN" resultMap="BaseResultMap">
+  	select aa.* from diaries aa, statistics bb
+  	where aa.user_id=#{userId} and aa.status=0 and aa.diary_id=bb.diary_id and aa.private_type in ('PUBLIC', 'PROTECTED')
+  	order by bb.view_number desc 
+  	limit 0, #{topNumber}
+  </select>
+  
 </mapper>

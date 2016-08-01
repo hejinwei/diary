@@ -152,5 +152,8 @@
     where name = #{name} 
   </select>
   
+  <select id="selectSign" resultType="java.lang.String">
+  	select sign from users where user_id=#{userId}
+  </select>
   
 </mapper>

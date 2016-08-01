@@ -38,4 +38,9 @@ public class UserServiceImpl implements UserService {
 		userMapper.deleteByPrimaryKey(id);
 	}
 
+	@Override
+	public String findSign(Long userId) {
+		return userMapper.selectSign(userId);
+	}
+
 }

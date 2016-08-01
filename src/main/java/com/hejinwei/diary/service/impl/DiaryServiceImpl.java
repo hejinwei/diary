@@ -84,8 +84,8 @@ public class DiaryServiceImpl implements DiaryService {
 	}
 
 	@Override
-	public List<Diary> findTop5(Long userId) {
-		return null;
+	public List<Diary> findTopN(Long userId, int topNumber) {
+		return diaryMapper.selectTopN(userId, topNumber);
 	}
 
 

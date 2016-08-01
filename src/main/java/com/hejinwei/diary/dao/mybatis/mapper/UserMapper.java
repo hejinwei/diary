@@ -42,4 +42,6 @@ public interface UserMapper {
 	int updateByPrimaryKey(User record);
 
 	User selectByName(@Param("name") String name);
+	
+	String selectSign(@Param("userId") Long userId);
 }

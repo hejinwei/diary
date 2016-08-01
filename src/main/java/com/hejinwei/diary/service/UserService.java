@@ -15,4 +15,5 @@ public interface UserService {
 	
 	void remove(Long id);
 
+	String findSign(Long userId);
 }

@@ -64,5 +64,6 @@ public interface DiaryMapper {
 	void updateDeleteStatus(@Param("diaryId") Long diaryId, @Param("status") Byte status);
 
 	Long selectUserIdByDiaryId(@Param("diaryId") Long diaryId);
-
+	
+	List<Diary> selectTopN(@Param("userId") Long userId, @Param("topNumber") int topNumber);
 }

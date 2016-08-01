@@ -2,16 +2,24 @@ package com.hejinwei.diary.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hejinwei.diary.dao.mybatis.model.Diary;
-import com.hejinwei.diary.dao.mybatis.model.DiaryPassword;
+import com.hejinwei.diary.dao.mybatis.model.User;
+import com.hejinwei.diary.enums.DiaryTypeEnum;
 import com.hejinwei.diary.enums.PrivateTypeEnum;
+import com.hejinwei.diary.enums.WeatherEnum;
 import com.hejinwei.diary.service.DiaryService;
+import com.hejinwei.diary.service.MemcachedService;
 import com.hejinwei.diary.service.StatisticService;
+import com.hejinwei.diary.service.UserService;
+import com.hejinwei.diary.util.Constants;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,20 +31,36 @@ public class ViewDiaryController {
 
     @Autowired
     private DiaryService diaryService;
+    
+    @Autowired
+    private MemcachedService memcachedService;
 
     @Autowired
     private StatisticService statisticService;
+    
+    @Autowired
+    private UserService userService;
 
     @RequestMapping("/viewDiary/{diaryId}")
     public ModelAndView viewDiary(@PathVariable("diaryId") Long diaryId) {
         ModelAndView mav = new ModelAndView("template/diary/view");
 
         Long userId = diaryService.findUserIdByDiaryId(diaryId);
+        
+        User user = (User) memcachedService.getWithType(userId + "", User.class);
 
         statisticService.addRecordOrAddViewNumber(diaryId, userId);
 
         Diary diary = diaryService.findDiary(diaryId);
         mav.addObject("diary", diary);
+        mav.addObject("owner", user);
+        
+        mav.addObject("diaryTypeEnums", DiaryTypeEnum.values());
+		mav.addObject("diaryTypeMap", DiaryTypeEnum.getMap());
+		mav.addObject("privateTypeEnums", PrivateTypeEnum.values());
+		mav.addObject("privateTypeMap", PrivateTypeEnum.getMap());
+		mav.addObject("weatherMap", WeatherEnum.getMap());
+		mav.addObject("weatherEnums", WeatherEnum.values());
 
         return mav;
     }
@@ -79,8 +103,29 @@ public class ViewDiaryController {
     @RequestMapping("/getTop5/{userId}")
     @ResponseBody
     public String getTop5(@PathVariable("userId") Long userId) {
-
-        return null;
+    	
+    	JSONObject jsonObject = new JSONObject();
+    	
+    	try {
+    		List<Diary> hotDiaries = diaryService.findTopN(userId, Constants.TOP_NUMBER);
+        	
+        	jsonObject.put("data", hotDiaries);
+        	
+        	int size = hotDiaries == null ? 0 : hotDiaries.size();
+        	jsonObject.put("size", size);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("size", 0);
+		}
+    	
+        return jsonObject.toString();
+    }
+    
+    @RequestMapping("/getSign/{userId}")
+    @ResponseBody
+    public String getSign(@PathVariable("userId") Long userId) {
+    	String sign = userService.findSign(userId);
+    	return sign;
     }
 
 

@@ -31,6 +31,6 @@ public interface DiaryService {
 
 	String findPassword(Long diaryId);
 
-	List<Diary> findTop5(Long userId);
+	List<Diary> findTopN(Long userId, int topNumber);
 	
 }

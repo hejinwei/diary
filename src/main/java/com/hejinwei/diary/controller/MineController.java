@@ -18,11 +18,13 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSONObject;
 import com.hejinwei.diary.dao.mybatis.model.Diary;
 import com.hejinwei.diary.dao.mybatis.model.DiaryPassword;
+import com.hejinwei.diary.dao.mybatis.model.User;
 import com.hejinwei.diary.enums.DiaryTypeEnum;
 import com.hejinwei.diary.enums.PrivateTypeEnum;
 import com.hejinwei.diary.enums.WeatherEnum;
 import com.hejinwei.diary.helpmodel.Page;
 import com.hejinwei.diary.service.DiaryService;
+import com.hejinwei.diary.service.MemcachedService;
 import com.hejinwei.diary.util.Constants;
 import com.hejinwei.diary.util.CookieHelper;
 
@@ -34,6 +36,9 @@ public class MineController {
 
 	@Autowired
 	private DiaryService diaryService;
+	
+	@Autowired
+	private MemcachedService memcachedService;
 
 	@RequestMapping("/mine")
 	public ModelAndView mine(HttpServletRequest request, @RequestParam(value = "type", defaultValue = "0") Byte type,
@@ -79,13 +84,17 @@ public class MineController {
 	}
 
 	@RequestMapping("/mine/addDiary")
-	public ModelAndView addDiary() {
+	public ModelAndView addDiary(HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView("template/diary/addOrEdit");
+		
+		Cookie userIdCookie = CookieHelper.getCookieByName(request, Constants.COOKIE_NAME_USERID);
+		User user = (User) memcachedService.getWithType(userIdCookie.getValue(), User.class);
 
 		mav.addObject("diaryTypeEnums", DiaryTypeEnum.values());
 		mav.addObject("weatherEnums", WeatherEnum.values());
 		mav.addObject("privateTypeEnums", PrivateTypeEnum.values());
 		mav.addObject("diary", null);
+		mav.addObject("owner", user);
 
 		return mav;
 	}
@@ -105,12 +114,15 @@ public class MineController {
 		if (diary.getUserId() != Long.parseLong(userIdCookie.getValue())) {
 			throw new RuntimeException("当前日记不属于你");
 		}
+		
+		User user = (User) memcachedService.getWithType(userIdCookie.getValue(), User.class);
 
 		mav.addObject("diary", diary);
 
 		mav.addObject("diaryTypeEnums", DiaryTypeEnum.values());
 		mav.addObject("weatherEnums", WeatherEnum.values());
 		mav.addObject("privateTypeEnums", PrivateTypeEnum.values());
+		mav.addObject("owner", user);
 
 		return mav;
 	}

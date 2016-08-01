@@ -127,7 +127,7 @@ layout("/template/layout/mineLayout.html", layoutParas){ %>
 						<% for (diary in diaries){ %>
 						<tr id='tr-${diary.diaryId}'>
 							<td>${diary.diaryId}</td>
-							<td><a href="#">${diary.title}</a></td>
+							<td><a href="viewDiary/${diary.diaryId}">${diary.title}</a></td>
 							<td class="am-hide-sm-only">${diaryTypeMap[diary.type]}</td>
 							<td><% utcFormatFunction(diary.date, 'yyyy-MM-dd'); %></td>
 							<td class="am-hide-sm-only">${weatherMap[diary.weather]}</td>
