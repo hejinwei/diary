@@ -1,5 +1,7 @@
 package com.hejinwei.diary.service;
 
+import com.hejinwei.diary.dao.mybatis.model.User;
+
 @SuppressWarnings("rawtypes")
 public interface MemcachedService {
 	boolean delete(String key);
@@ -19,4 +21,6 @@ public interface MemcachedService {
 	Object[] getWithType(String keys[], Class clazz);
 
 	void setWithType(String keys[], Class clazz, Object objects[]);
+	
+	User getUser(String key);
 }

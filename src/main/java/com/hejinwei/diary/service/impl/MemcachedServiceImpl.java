@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.danga.MemCached.MemCachedClient;
+import com.hejinwei.diary.dao.mybatis.mapper.UserMapper;
+import com.hejinwei.diary.dao.mybatis.model.User;
 import com.hejinwei.diary.service.MemcachedService;
 
 @Service
@@ -12,6 +14,9 @@ public class MemcachedServiceImpl implements MemcachedService {
 
 	@Autowired
 	private MemCachedClient memCachedClient;
+	
+	@Autowired
+	private UserMapper userMapper;
 
 	/*public void setMemCachedClient(MemCachedClient memCachedClient) {
 		this.memCachedClient = memCachedClient;
@@ -78,6 +83,25 @@ public class MemcachedServiceImpl implements MemcachedService {
 		for (int i = 0; i < keys.length; i++) {
 			memCachedClient.set(getKeyWithType(keys[i], clazz), objects[i]);
 		}
+	}
+
+	@Override
+	public User getUser(String key) {
+		
+		if (key == null) {
+			return null;
+		}
+		
+		User user = (User)getWithType(key, User.class);
+		
+		if (user == null) {
+			user = userMapper.selectByPrimaryKey(Long.parseLong(key));
+			if (user != null) {
+				setWithType(key, User.class);
+			}
+		}
+		
+		return user;
 	}
 
 }

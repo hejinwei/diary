@@ -11,6 +11,7 @@ import com.hejinwei.diary.service.MemcachedService;
 import com.hejinwei.diary.service.StatisticService;
 import com.hejinwei.diary.service.UserService;
 import com.hejinwei.diary.util.Constants;
+import com.hejinwei.diary.util.CookieHelper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -42,18 +44,45 @@ public class ViewDiaryController {
     private UserService userService;
 
     @RequestMapping("/viewDiary/{diaryId}")
-    public ModelAndView viewDiary(@PathVariable("diaryId") Long diaryId) {
+    public ModelAndView viewDiary(HttpServletRequest request, @PathVariable("diaryId") Long diaryId) {
         ModelAndView mav = new ModelAndView("template/diary/view");
 
-        Long userId = diaryService.findUserIdByDiaryId(diaryId);
+        Long ownerId = diaryService.findUserIdByDiaryId(diaryId);
         
-        User user = (User) memcachedService.getWithType(userId + "", User.class);
-
-        statisticService.addRecordOrAddViewNumber(diaryId, userId);
+        User owner = (User) memcachedService.getUser(ownerId + "");
 
         Diary diary = diaryService.findDiary(diaryId);
+        
+        Cookie curUserCookie = CookieHelper.getCookieByName(request, Constants.COOKIE_NAME_USERID);
+        
+        if (PrivateTypeEnum.PRIVATE.getCode().equals(diary.getPrivateType())) {
+        	if (curUserCookie == null || curUserCookie.getValue() == null) {
+        		throw new RuntimeException("No Login");
+        	} else if (!curUserCookie.getValue().equals(ownerId + "")) {
+        		throw new RuntimeException("Not CurrentUser");
+        	}
+        } else if (PrivateTypeEnum.PROTECTED.getCode().equals(diary.getPrivateType())) {
+        	
+        	if (curUserCookie != null && curUserCookie.getValue() != null && 
+        			curUserCookie.getValue().equals(ownerId + "")) {
+        		// 自己不需要密码
+        	} else {
+        		String password = request.getParameter("password");
+            	if (password == null) {
+            		throw new RuntimeException("No Password");
+            	} else {
+            		String realPassword = diaryService.findPassword(diaryId);
+            		if (!password.equals(realPassword)) {
+            			throw new RuntimeException("Password Error");
+            		}
+            	}
+        	}
+        }
+        
+        statisticService.addRecordOrAddViewNumber(diaryId, ownerId);
+        
         mav.addObject("diary", diary);
-        mav.addObject("owner", user);
+        mav.addObject("owner", owner);
         
         mav.addObject("diaryTypeEnums", DiaryTypeEnum.values());
 		mav.addObject("diaryTypeMap", DiaryTypeEnum.getMap());

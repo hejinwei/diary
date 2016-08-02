@@ -109,47 +109,57 @@
   </div>
 </header>
 
-<div class="am-g am-g-fixed blog-g-fixed">
-  <div class="am-u-md-8">
-    ${layoutContent}
-  </div>
+	<div class="am-g am-g-fixed blog-g-fixed">
+		<div class="am-g">
+			<div class="am-u-sm-12 am-u-md-12">
+				<div class="am-fl am-cf">
+					<strong class="am-text-primary am-text-lg">${owner.nickname}</strong>
+				</div>
+			</div>
+		</div>
+		
+		<hr>
 
-  <div class="am-u-md-4 blog-sidebar">
-  
-    <div class="am-panel-group">
-    
-      <section class="am-panel am-panel-default">
-        <div class="am-panel-hd">头像</div>
-        <div class="am-panel-bd">
-          <img alt="${owner.nickname}" src="${owner.headImage}" style="width: 100%">
-        </div>
-      </section>
-    
-      <section class="am-panel am-panel-default">
-        <div class="am-panel-hd">个性签名</div>
-        <div class="am-panel-bd">
-          <p id="signContent">${owner.sign!}</p>
-        </div>
-      </section>
-      <section class="am-panel am-panel-default">
-        <div class="am-panel-hd">热门日记</div>
-        <ul class="am-list blog-list" id="hotDiaries">
-         
-        </ul>
-      </section>
 
-      <section class="am-panel am-panel-default">
-        <div class="am-panel-hd">公告</div>
-        <div class="am-panel-bd">
-			<p>时光静好，与君语；细水流年，与君同。</p>            
-        </div>
-      </section>
-    </div>
-  </div>
+		<div class="am-u-md-8">${layoutContent}</div>
 
-</div>
+		<div class="am-u-md-4 blog-sidebar">
 
-<footer class="blog-footer">
+			<div class="am-panel-group">
+
+				<section class="am-panel am-panel-default">
+					<!-- <div class="am-panel-hd">头像</div> -->
+					<div class="am-panel-bd">
+						<img alt="${owner.nickname}" src="${owner.headImage}"
+							style="width: 100%">
+					</div>
+				</section>
+
+				<section class="am-panel am-panel-default">
+					<div class="am-panel-hd">个性签名</div>
+					<div class="am-panel-bd">
+						<p id="signContent">${owner.sign!}</p>
+					</div>
+				</section>
+				<section class="am-panel am-panel-default">
+					<div class="am-panel-hd">热门日记</div>
+					<ul class="am-list blog-list" id="hotDiaries">
+
+					</ul>
+				</section>
+
+				<section class="am-panel am-panel-default">
+					<div class="am-panel-hd">公告</div>
+					<div class="am-panel-bd">
+						<p>时光静好，与君语；细水流年，与君同。</p>
+					</div>
+				</section>
+			</div>
+		</div>
+
+	</div>
+
+	<footer class="blog-footer">
   <p>blog template<br/>
     <small>© 版权还没弄</small>
   </p>
@@ -181,8 +191,11 @@ jQuery(document).ready(function() {
 	    	data = eval("(" + data + ")");
 	        if(data.size > 0 ){
 	        	$.each(data.data, function(i, item) {
-	        		var line = '<li><a href="${contextPath}/viewDiary/' + item.diaryId + '">' + item.title +'</a></li>';
+	        		var functionDesc = "preViewDiary('" + item.diaryId + "', '" + item.privateType + "')";
+	        		console.log(functionDesc);
+	        		var line = '<li><a href="javascript:void(0)" onclick="' + functionDesc + '">' + item.title +'</a></li>';
 	        		console.log(line);
+	        		//var line = '<li><a href="${contextPath}/viewDiary/' + item.diaryId + '">' + item.title +'</a></li>';
 	        		$('#hotDiaries').append(line);
 	        	});  
 	        } 
@@ -193,6 +206,72 @@ jQuery(document).ready(function() {
 	});
 	
 });
+
+function preViewDiary(diaryId, privateType) {
+	
+	if (privateType == 'PUBLIC') {
+		viewDiary(diaryId, privateType, null);
+	}
+	
+	// 判断私密类型
+	if (privateType == 'PROTECTED') {
+		// 加密类型，判断密码
+		var password = window.prompt("请输入密码","");
+		if (password == null || $.trim(password) == '') {
+			alert("密码不能为空");
+			return;
+		}
+		
+		// ajax 判断密码是否正确
+		$.ajax({
+            type:"GET",
+            //提交的网址
+            url:"${contextPath}/checkPassword/" + diaryId,
+            //提交的数据
+            data:{password:password},
+            //返回数据的格式
+            dataType: "json",//"xml", "html", "script", "json", "jsonp", "text".
+            //成功返回之后调用的函数             
+            success:function(data){
+           		data = eval('(' + data + ')');
+           		if (data.code != 0) {
+           			alert(data.message);
+           			return;
+           		} else {
+           			viewDiary(diaryId, privateType, password);
+           		}
+            },
+           
+            //调用出错执行的函数
+            error: function(){
+                //请求出错处理
+            	console.log("error函数");
+            }         
+         });
+	}
+}
+
+function viewDiary(diaryId, privateType, password) {
+	
+	if (privateType != 'PROTECTED') {
+		window.location.href = '${contextPath}/viewDiary/' + diaryId;
+	} else {
+		var turnForm = document.createElement("form");
+		//一定要加入到body中！！   
+		document.body.appendChild(turnForm);
+		turnForm.method = 'post';
+		turnForm.action = '${contextPath}/viewDiary/' + diaryId;
+		//turnForm.target = '_blank';
+		//创建隐藏表单
+		var newElement = document.createElement("input");
+		newElement.setAttribute("name", "password");
+		newElement.setAttribute("type", "hidden");
+		newElement.setAttribute("value", password);
+		turnForm.appendChild(newElement);
+
+		turnForm.submit();
+	}
+}
 
 </script>
 

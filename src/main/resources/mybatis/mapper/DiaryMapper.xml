@@ -229,7 +229,7 @@
   	<if test="type != null">
         and type = #{type,jdbcType=TINYINT}
     </if>
-    order by diary_id
+    order by diary_id desc
     limit #{startIndex}, #{pageSize}
   </select>
   
@@ -249,7 +249,7 @@
   	<if test="type != null">
         and type = #{type,jdbcType=TINYINT}
     </if>
-    order by diary_id
+    order by diary_id desc
     limit #{startIndex}, #{pageSize}
   </select>
   
