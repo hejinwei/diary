@@ -142,16 +142,19 @@ function addImageUploader(isSingel, maxImageNum, buttonId, fileListId, hiddenInp
 		
 		if (typeof(alreadyExistImages) == 'object') {
 			for (var i = 0; i < alreadyExistImages.length; i++) {
-				addOneImage(alreadyExistImages[i] + upyunVersionStr, null);
+				//addOneImage(alreadyExistImages[i] + upyunVersionStr, null);
+				addOneImage(alreadyExistImages[i], null);
 			}
 		} else {
 			if (alreadyExistImages.length > 2 && alreadyExistImages.substr(0,1) == '[' && alreadyExistImages.substr(-1,1) == ']') {
 				alreadyExistImages = alreadyExistImages.substr(1, alreadyExistImages.length-2).split(',');
 				for (var i = 0; i < alreadyExistImages.length; i++) {
-					addOneImage(alreadyExistImages[i] + upyunVersionStr, null);
+					//addOneImage(alreadyExistImages[i] + upyunVersionStr, null);
+					addOneImage(alreadyExistImages[i], null);
 				}
 			} else {
-				addOneImage(alreadyExistImages + upyunVersionStr, null);
+				//addOneImage(alreadyExistImages + upyunVersionStr, null);
+				addOneImage(alreadyExistImages, null);
 			}
 		}
 	}

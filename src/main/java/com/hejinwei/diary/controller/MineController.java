@@ -53,7 +53,7 @@ public class MineController {
 
 		Cookie userIdCookie = CookieHelper.getCookieByName(request, Constants.COOKIE_NAME_USERID);
 		if (userIdCookie == null || userIdCookie.getValue() == null) {
-			mav = new ModelAndView(Constants.contextPath + "/login");
+			mav = new ModelAndView("template/login");
 			return mav;
 		}
 
@@ -107,7 +107,7 @@ public class MineController {
 
 		Cookie userIdCookie = CookieHelper.getCookieByName(request, Constants.COOKIE_NAME_USERID);
 		if (userIdCookie == null || userIdCookie.getValue() == null) {
-			mav = new ModelAndView(Constants.contextPath + "/login");
+			mav = new ModelAndView("template/login");
 			return mav;
 		}
 
@@ -202,7 +202,7 @@ public class MineController {
 			Cookie userIdCookie = CookieHelper.getCookieByName(request, Constants.COOKIE_NAME_USERID);
 			if (userIdCookie == null || userIdCookie.getValue() == null) {
 				jsonObject.put("code", 1);
-				jsonObject.put("message", "请登录");
+				jsonObject.put("message", "未登录");
 				return jsonObject.toString();
 			}
 			

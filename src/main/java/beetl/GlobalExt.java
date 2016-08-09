@@ -20,6 +20,8 @@ public class GlobalExt implements WebRenderExt {
 		
 		template.binding("contextPath", Constants.contextPath);
 		template.binding("webName", "XM日记"); // 网站名
+		template.binding("webIntroduction", "爱生活，爱留忆，爱吐槽");
+		template.binding("icpLicense", "备案还没加");
 	}
 
 }

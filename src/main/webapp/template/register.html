@@ -2,7 +2,14 @@
 <html>
 <head lang="zh">
     <meta charset="UTF-8">
-    <title>注册</title>
+    
+    <% if (user == null) { %>
+        <title>注册</title>
+        <% } else { %>
+        <title>修改个人资料</title>
+        <% } %>
+    
+    
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="format-detection" content="telephone=no">
@@ -31,40 +38,59 @@
     <!-- <script type="text/javascript" src="${contextPath}/static/jquery-3.0.0.min.js"></script> -->
     <script src="${contextPath}/static/assets/js/jquery.min.js"></script>
     <script type="text/javascript" src="${contextPath}/static/webuploader/webuploader.js"></script>
-    <script type="text/javascript" src="${contextPath}/static/custom/uploadImage.js?v=1"></script>
+    <script type="text/javascript" src="${contextPath}/static/custom/uploadImage.js?v=2"></script>
 </head>
 <body>
 <div class="header">
     <div class="am-g">
-        <h1>修行日记</h1>
+        <h1>${webName}</h1>
 
-        <p>人生本是一场修行</p>
+        <p>${webIntroduction}</p>
     </div>
     <hr/>
 </div>
 <div class="am-g">
     <div class="am-u-lg-6 am-u-md-8 am-u-sm-centered">
+    	<% if (user == null) { %>
         <h2>注册</h2>
+        <% } else { %>
+        <h2>修改个人资料</h2>
+        <% } %>
         <hr>
 
         <br>
         <br>
 
-        <form method="post" class="am-form" action="doRegister" onsubmit="check()">
+        <form method="post" class="am-form" 
+        	<% if (user == null) {  %> action="${contextPath}/doRegister" <% } else { %> action="${contextPath}/mine/doEditPersonalInfo" <% } %>
+        	onsubmit="check()">
+        	
+        	<% if (user != null) {  %>
+        		<input type="hidden" name="userId" value="${user.userId}">
+        	<% } %>
+        	
             <label for="name">用户名:</label>
-            <input type="text" name="name" id="name" value="">
+            <input type="text" name="name" id="name" value="${user.name!}">
             <br>
+            
+            <label for="email">邮箱:</label>
+            <input type="text" name="email" id="email" value="${user.email!}">
+            <br>
+            
+            <% if (user == null) { %>
             <label for="password">密码:</label>
             <input type="password" name="password" id="password" value="">
             <br>
             <label for="repeatPassword">确认密码:</label>
             <input type="password" name="repeatPassword" id="repeatPassword" value="">
             <br>
+			<% } %>
+            
             <label for="nickname">昵称:</label>
-            <input type="text" name="nickname" id="nickname" value="">
+            <input type="text" name="nickname" id="nickname" value="${user.nickname!}">
             <br>
             <label for="sign">个性签名:</label>
-            <input type="text" name="sign" id="sign" value="">
+            <input type="text" name="sign" id="sign" value="${user.sign!}">
             <br>
             <label for="headImageList">头像:</label>
 
@@ -78,9 +104,11 @@
 
             <br/>
 
-            <div class="am-cf">
-                <input onclick="doRegister()" type="submit" name="" value="确定"
-                       class="am-btn am-btn-primary am-btn-sm am-fl">
+            <div class="am-cf" style="align:center;">
+                <input type="submit" name="" value="确定"
+                       class="am-btn am-btn-primary am-btn-sm">
+                       &nbsp;&nbsp; &nbsp;&nbsp;
+                <input type="button" value="返回" class="am-btn am-btn-success am-btn-sm" onclick="history.back();">
             </div>
         </form>
         <hr>
@@ -97,13 +125,18 @@
             function () {
 
                 var imageType = '100';
-
+				
+                <% if (user == null) { %>
                 addImageUploader(true, 1, "headImagePicker", "headImageList", "headImage", imageType, null, '${contextPath}');
-
+				<% } else { %>
+				addImageUploader(true, 1, "headImagePicker", "headImageList", "headImage", imageType, "${user.headImage}", '${contextPath}');
+				<% } %>
+				
             });
 
     function check() {
         var name = $('#name').val();
+        var email = $('#email').val();
         var password = $('#password').val();
         var repeatPassword = $('#repeatPassword').val();
         var nickname = $('#nickname').val();
@@ -117,7 +150,19 @@
             alert('用户名中不能包含空格');
             return false;
         }
+        
+        if (email == '') {
+        	alert('邮箱不能为空');
+        	return false;
+        }
+        
+        var emailReg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+        if ( !emailReg.test(email) ) {
+        	alert('请输入有效的邮箱，找回密码的时候会用到');
+        	return false;
+        }
 
+        <% if (user == null) { %>
         if (password == '') {
             alert('密码不能为空');
             return false;
@@ -132,11 +177,14 @@
             alert('两次输入的密码不一致');
             return false;
         }
+        <% } %>
 
         if (nickname == '') {
             alert('昵称不能为空');
             return false;
         }
+        
+        return true;
     }
 </script>
 

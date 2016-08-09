@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hejinwei.diary.dao.mybatis.model.User;
@@ -84,8 +85,10 @@ public class LoginController {
 	}
 	
 	@RequestMapping("/register")
-	public String register() {
-		return "template/register";
+	public ModelAndView register() {
+		ModelAndView mav = new ModelAndView("template/register");
+		mav.addObject("user", null);
+		return mav;
 	}
 	
 	@RequestMapping(value = "/doRegister", method = RequestMethod.POST)

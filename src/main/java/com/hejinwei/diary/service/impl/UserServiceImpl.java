@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void edit(User user) {
-		userMapper.updateByPrimaryKey(user);
+		userMapper.updateByPrimaryKeySelective(user);
 	}
 
 	@Override
@@ -41,6 +41,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public String findSign(Long userId) {
 		return userMapper.selectSign(userId);
+	}
+
+	@Override
+	public void editPassword(Long userId, String password) {
+		userMapper.updatePassword(userId, password);
 	}
 
 }

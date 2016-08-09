@@ -16,4 +16,6 @@ public interface UserService {
 	void remove(Long id);
 
 	String findSign(Long userId);
+	
+	void editPassword(Long userId, String password);
 }
