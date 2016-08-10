@@ -38,7 +38,7 @@
 		
 		
 		
-		<table tableName="Users" domainObjectName="User"
+		<table tableName="Comments" domainObjectName="Comment"
 			enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false"
 			selectByExampleQueryId="false"></table>

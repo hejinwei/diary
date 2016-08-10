@@ -24,7 +24,6 @@ import com.hejinwei.diary.service.UserService;
 import com.hejinwei.diary.util.Constants;
 import com.hejinwei.diary.util.CookieHelper;
 import com.hejinwei.diary.util.MD5Util;
-import com.hejinwei.diary.util.SystemUtil;
 
 @Controller
 public class UserController extends BaseController {
@@ -40,7 +39,7 @@ public class UserController extends BaseController {
 		
 		ModelAndView mav = new ModelAndView();
 		
-		if ( !SystemUtil.isLogined(request) ) {
+		if ( !isLogined(request) ) {
 			mav.setViewName("template/login");
 			return mav;
 		}
@@ -69,7 +68,7 @@ public class UserController extends BaseController {
 	@RequestMapping("/mine/editPassword")
 	public String editPassword(HttpServletRequest request) {
 		
-		if ( !SystemUtil.isLogined(request) ) {
+		if ( !isLogined(request) ) {
 			return "template/login";
 		}
 		
@@ -79,7 +78,7 @@ public class UserController extends BaseController {
 	@RequestMapping(value="/mine/doEditPassword", method = RequestMethod.POST)
 	@ResponseBody
 	public String doEditPassword(HttpServletRequest request) {
-		if ( !SystemUtil.isLogined(request) ) {
+		if ( !isLogined(request) ) {
 			return operateResult(1, "未登录");
 		}
 		

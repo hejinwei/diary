@@ -46,25 +46,23 @@ public class ViewDiaryController {
     @RequestMapping("/viewDiary/{diaryId}")
     public ModelAndView viewDiary(HttpServletRequest request, @PathVariable("diaryId") Long diaryId) {
         ModelAndView mav = new ModelAndView("template/diary/view");
-
-        Long ownerId = diaryService.findUserIdByDiaryId(diaryId);
         
-        User owner = (User) memcachedService.getUser(ownerId + "");
-
         Diary diary = diaryService.findDiary(diaryId);
+        
+        User owner = (User) memcachedService.getUser(diary.getUserId() + "");
         
         Cookie curUserCookie = CookieHelper.getCookieByName(request, Constants.COOKIE_NAME_USERID);
         
         if (PrivateTypeEnum.PRIVATE.getCode().equals(diary.getPrivateType())) {
         	if (curUserCookie == null || curUserCookie.getValue() == null) {
         		throw new RuntimeException("No Login");
-        	} else if (!curUserCookie.getValue().equals(ownerId + "")) {
+        	} else if (!curUserCookie.getValue().equals(diary.getUserId() + "")) {
         		throw new RuntimeException("Not CurrentUser");
         	}
         } else if (PrivateTypeEnum.PROTECTED.getCode().equals(diary.getPrivateType())) {
         	
         	if (curUserCookie != null && curUserCookie.getValue() != null && 
-        			curUserCookie.getValue().equals(ownerId + "")) {
+        			curUserCookie.getValue().equals(diary.getUserId() + "")) {
         		// 自己不需要密码
         	} else {
         		String password = request.getParameter("password");
@@ -79,7 +77,7 @@ public class ViewDiaryController {
         	}
         }
         
-        statisticService.addRecordOrAddViewNumber(diaryId, ownerId);
+        statisticService.addRecordOrAddViewNumber(diaryId, diary.getUserId());
         
         mav.addObject("diary", diary);
         mav.addObject("owner", owner);
