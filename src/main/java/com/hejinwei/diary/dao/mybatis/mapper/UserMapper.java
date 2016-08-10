@@ -1,5 +1,7 @@
 package com.hejinwei.diary.dao.mybatis.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 import com.hejinwei.diary.dao.mybatis.model.User;
@@ -46,4 +48,11 @@ public interface UserMapper {
 	String selectSign(@Param("userId") Long userId);
 	
 	int updatePassword(@Param("userId") Long userId, @Param("password") String password);
+	
+	List<User> selectByFuzzySeachNickname(@Param("nickname") String nickname);
+	
+	List<User> selectPageByFuzzySeachNickname(@Param("nickname") String nickname, 
+			@Param("startIndex") Integer startIndex, @Param("pageSize") Integer pageSize);
+	
+	int selectCountByFuzzySeachNickname(@Param("nickname") String nickname);
 }

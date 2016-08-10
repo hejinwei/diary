@@ -1,5 +1,7 @@
 package com.hejinwei.diary.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +48,24 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void editPassword(Long userId, String password) {
 		userMapper.updatePassword(userId, password);
+	}
+
+	@Override
+	public List<User> searchUsersByNickname(String nickname) {
+		List<User> users = userMapper.selectByFuzzySeachNickname(nickname);
+		return users;
+	}
+
+	@Override
+	public List<User> searchPageUsersByNickname(String nickname, Integer pageNum, Integer pageSize) {
+		int startIndex = (pageNum - 1) * pageSize;
+		List<User> users = userMapper.selectPageByFuzzySeachNickname(nickname, startIndex, pageSize);
+		return users;
+	}
+
+	@Override
+	public int searchCountByNickname(String nickname) {
+		return userMapper.selectCountByFuzzySeachNickname(nickname);
 	}
 
 }

@@ -1,5 +1,9 @@
 package com.hejinwei.diary.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -9,10 +13,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.hejinwei.diary.dao.mybatis.model.User;
+import com.hejinwei.diary.helpmodel.Page;
 import com.hejinwei.diary.service.MailService;
 import com.hejinwei.diary.service.UserService;
 import com.hejinwei.diary.util.Constants;
@@ -137,6 +143,35 @@ public class UserController extends BaseController {
 		userService.editPassword(user.getUserId(), MD5Util.getMD5WithSalt(newPassword));
 		
 		return operateResult(0, "密码重置成功，请去邮箱查收");
+	}
+	
+	@RequestMapping("/doSearchPeople")
+	public ModelAndView findPeople(@RequestParam(value = "nickname" ) String nickname,
+			@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) throws UnsupportedEncodingException {
+		ModelAndView mav = new ModelAndView("template/searchResult");
+		
+		if (StringUtils.isEmpty(nickname)) {
+			throw new RuntimeException("搜索内容为空");
+		}
+		
+		nickname = URLDecoder.decode(nickname, "UTF-8");
+		
+		int count = userService.searchCountByNickname(nickname);
+		Page page = new Page();
+		page.setCurrentPageNum(pageNum);
+		page.setTotalCount(count);
+		mav.addObject("page", page);
+		
+		if (count == 0) {
+			mav.addObject("userList", null);
+		} else {
+			List<User> userList = userService.searchPageUsersByNickname(nickname, pageNum, 10);
+			mav.addObject("userList", userList);
+		}
+		
+		mav.addObject("nickname", nickname);
+		
+		return mav;
 	}
 	
 }

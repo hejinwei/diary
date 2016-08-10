@@ -172,4 +172,25 @@
   	where user_id = #{userId,jdbcType=BIGINT}
   </update>
   
+  <select id="selectByFuzzySeachNickname" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from users
+    where nickname like CONCAT('%',#{nickname},'%') 
+  </select>
+  
+  <select id="selectPageByFuzzySeachNickname" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from users
+    where nickname like CONCAT('%',#{nickname},'%') 
+    limit #{startIndex}, #{pageSize}
+  </select>
+  
+  <select id="selectCountByFuzzySeachNickname" resultType="java.lang.Integer">
+  	select count(1)
+    from users
+    where nickname like CONCAT('%',#{nickname},'%') 
+  </select>
+  
 </mapper>
