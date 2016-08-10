@@ -12,8 +12,20 @@ public class Constants {
 	public static final String contextPath = "/diary";
 //	public static final String contextPath = "";
 	
+	public static final String webName = "XM日记";
+	public static final String webIntroduction = "爱生活，爱留忆，爱吐槽";
+	public static final String icpLicense = "备案还没加";
+	
 	public static final Byte DELETE_STATUS = (byte)1;
 	
 	public static final Integer TOP_NUMBER = 5;
+	
+	public static final String MAIL_HOSTNAME = "smtp.163.com";
+	
+	public static final String MAIL_POP_USERNAME = "xiaoyudian_notice@163.com";
+	
+	public static final String MAIL_POP_PASSWORD = "abc123";
+	
+	public static final String MAIL_USERNAME = "xiaoyudian_notice";
 
 }

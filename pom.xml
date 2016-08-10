@@ -227,29 +227,25 @@
 			<version>20160212</version>
 		</dependency>
 
-		<!-- <dependency>
-			<groupId>beetl</groupId>
-			<artifactId>beetl</artifactId>
-			<version>2.5.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/beetl-2.5.0.jar</systemPath>
-		</dependency>
-		
+		<!-- <dependency> <groupId>beetl</groupId> <artifactId>beetl</artifactId> 
+			<version>2.5.0</version> <scope>system</scope> <systemPath>${project.basedir}/lib/beetl-2.5.0.jar</systemPath> 
+			</dependency> <dependency> <groupId>org.memcached</groupId> <artifactId>java-memcached-release</artifactId> 
+			<version>2.6.6</version> <scope>system</scope> <systemPath>${project.basedir}/lib/java-memcached-release-2.6.6.jar</systemPath> 
+			</dependency> <dependency> <groupId>org.ueditor</groupId> <artifactId>ueditor</artifactId> 
+			<version>1.1.2</version> <scope>system</scope> <systemPath>${project.basedir}/lib/ueditor-1.1.2.jar</systemPath> 
+			</dependency> -->
+
 		<dependency>
-			<groupId>org.memcached</groupId>
-			<artifactId>java-memcached-release</artifactId>
-			<version>2.6.6</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/java-memcached-release-2.6.6.jar</systemPath>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-email</artifactId>
+			<version>1.4</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.ueditor</groupId>
-			<artifactId>ueditor</artifactId>
-			<version>1.1.2</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/ueditor-1.1.2.jar</systemPath>
-		</dependency> -->
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.2.1</version>
+		</dependency>
 
 	</dependencies>
 

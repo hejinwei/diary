@@ -2,15 +2,18 @@ package com.hejinwei.diary.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.mail.EmailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.alibaba.fastjson.JSONObject;
 import com.hejinwei.diary.dao.mybatis.model.User;
+import com.hejinwei.diary.service.MailService;
 import com.hejinwei.diary.service.UserService;
 import com.hejinwei.diary.util.Constants;
 import com.hejinwei.diary.util.CookieHelper;
@@ -18,10 +21,13 @@ import com.hejinwei.diary.util.MD5Util;
 import com.hejinwei.diary.util.SystemUtil;
 
 @Controller
-public class UserController {
+public class UserController extends BaseController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private MailService mailService;
 	
 	@RequestMapping("/mine/editPersonalInfo")
 	public ModelAndView editPersonalInfo(HttpServletRequest request) {
@@ -67,11 +73,8 @@ public class UserController {
 	@RequestMapping(value="/mine/doEditPassword", method = RequestMethod.POST)
 	@ResponseBody
 	public String doEditPassword(HttpServletRequest request) {
-		JSONObject jsonObject = new JSONObject();
 		if ( !SystemUtil.isLogined(request) ) {
-			jsonObject.put("code", 1);
-			jsonObject.put("message", "未登录");
-			return jsonObject.toString();
+			return operateResult(1, "未登录");
 		}
 		
 		try {
@@ -81,25 +84,59 @@ public class UserController {
 			oldPassword = MD5Util.getMD5WithSalt(oldPassword);
 			User user = userService.findById(userId);
 			if ( !user.getPassword().equals(oldPassword) ) {
-				jsonObject.put("code", 2);
-				jsonObject.put("message", "旧密码错误");
-				return jsonObject.toString();
+				return operateResult(2, "旧密码错误");
 			}
 			
 			String newPassword = request.getParameter("newPassword");
 			newPassword = MD5Util.getMD5WithSalt(newPassword);
 			userService.editPassword(userId, newPassword);
 			
-			jsonObject.put("code", 0);
-			jsonObject.put("message", "修改成功，请重新登录");
-			return jsonObject.toString();
+			return operateResult(0, "修改成功，请重新登录");
 		} catch (Exception e) {
 			e.printStackTrace();
-			jsonObject.put("code", 99);
-			jsonObject.put("message", "系统异常");
-			return jsonObject.toString();
+			return operateResult(99, "系统异常");
 		}
 		
 	}
+	
+	@RequestMapping("/forgetPassword")
+	public ModelAndView forgetPassword(HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView("template/forgetPassword");
+		
+		return mav;
+	}
 
+	@RequestMapping(value = "/doForgetPassword", method = RequestMethod.POST)
+	@ResponseBody
+	public String doForgetPassword(HttpServletRequest request) {
+		String name = request.getParameter("name");
+		String email = request.getParameter("email");
+		
+		if (StringUtils.isEmpty(name) || StringUtils.isEmpty(email)) {
+			throw new RuntimeException("用户名或邮箱为空");
+		}
+		
+		User user = userService.findByName(name);
+		if (user == null) {
+			return operateResult(1, "用户不存在");
+		}
+		
+		if ( !email.equalsIgnoreCase(user.getEmail()) ) {
+			return operateResult(2, "用户名、邮箱不一致");
+		}
+		
+		String newPassword = RandomStringUtils.randomAlphanumeric(8);
+		String message = "你在" + Constants.webName + "的密码已被改为:" + newPassword;
+		try {
+			mailService.apacheSimpleMail(email, Constants.webName + "的新密码", message);
+		} catch (EmailException e) {
+			e.printStackTrace();
+			return operateResult(3, "给" + email + "发送邮件失败，请联系网站管理员");
+		}
+		
+		userService.editPassword(user.getUserId(), MD5Util.getMD5WithSalt(newPassword));
+		
+		return operateResult(0, "密码重置成功，请去邮箱查收");
+	}
+	
 }
