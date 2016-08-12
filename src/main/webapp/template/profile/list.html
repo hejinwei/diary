@@ -71,7 +71,7 @@ layout("/template/layout/profileLayout.html", layoutParas){ %>
 						<!-- <th class="table-id">ID</th> -->
 						<th class="table-title">标题</th>
 						<th class="table-type">类别</th>
-						<th class="table-date am-hide-sm-only">日期</th>
+						<th class="table-date">日期</th>
 						<th class="table-type">天气</th>
 						<th class="table-type">私密性</th>
 					</tr>
@@ -82,10 +82,10 @@ layout("/template/layout/profileLayout.html", layoutParas){ %>
 						<tr id='tr-${diary.diaryId}'>
 							<!-- <td>${diary.diaryId}</td> -->
 							<td><a onclick="preViewDiary('${diary.diaryId}', '${diary.privateType}')" href="javascript:void(0)">${diary.title}</a></td>
-							<td class="am-hide-sm-only">${diaryTypeMap[diary.type]}</td>
+							<td>${diaryTypeMap[diary.type]}</td>
 							<td><% utcFormatFunction(diary.date, 'yyyy-MM-dd'); %></td>
-							<td class="am-hide-sm-only">${weatherMap[diary.weather]}</td>
-							<td class="am-hide-sm-only">${privateTypeMap[diary.privateType]}</td>
+							<td>${weatherMap[diary.weather]}</td>
+							<td>${privateTypeMap[diary.privateType]}</td>
 						</tr>
 					<% } } %>
 
