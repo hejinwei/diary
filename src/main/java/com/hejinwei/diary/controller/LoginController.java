@@ -29,6 +29,12 @@ public class LoginController {
 
 	@Autowired
 	private UserService userService;
+	
+	@RequestMapping("/")
+	public String index() {
+		return "redirect:/login";
+	}
+	
 
 	@RequestMapping("/login")
 	public String login() {

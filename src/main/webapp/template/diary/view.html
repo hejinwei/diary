@@ -2,15 +2,147 @@
 
 <script type="text/javascript" charset="utf-8" src="${contextPath}/static/ueditor/ueditor.config.js"></script>
 <script type="text/javascript" charset="utf-8" src="${contextPath}/static/ueditor/ueditor.all.min.js"> </script>
-
+<script type="text/javascript" charset="utf-8" src="${contextPath}/static/assets/js/jquery.cookie.js"> </script>
 <script type="text/javascript">
 
 	jQuery(document).ready(function() {
-		$('#diaryContent').html('${diary.content!}');
+		//$('#diaryContent').html('${diary.content!}');
+		
+		initDiaryContent();
+		
+		var userId = $.cookie('userId');
+		
+		console.log(userId);
+		
+		if (typeof(userId) != 'undefined' && userId != null && userId != '') {
+			document.getElementById("commentDiv").style.display="";
+		} else {
+			document.getElementById("commentHint").style.display="";
+		}
+		
+		$.ajax( {  
+		    url:'${contextPath}/comment/findList', 
+		    data:{  
+		    		diaryId : ${diary.diaryId}
+		    },
+		    type:'get',  
+		    cache:false,  
+		    dataType:'json',
+		    success:function(data) {
+		    	console.log(data);
+		    	data = eval("(" + data + ")");
+		        if(data.count > 0 ){
+		        	 $.each(data.commentList, function(i, comment) {
+		        		 addOneComment(comment, false);
+		        	 });
+		        }  
+		     },  
+		     error : function() {  
+		          alert("异常！");  
+		     }  
+		});
+		
 	});
+	
+	function addOneComment(comment, insertBefore) {
+		var headImageHref = comment.headImage;
+		 if (typeof(headImageHref) == 'undefined' || headImageHref == null ) {
+			 headImageHref = "";
+		 }
+		 var commentHeadImageHtml = '<a href="${contextPath}/profile/list/' + comment.userId + '"><img class="am-comment-avatar" src="' + headImageHref + '" /></a>';
+		 //console.log(commentHeadImageHtml);
+		 
+		 var commentHeadHtml = '<header class="am-comment-hd"><div class="am-comment-meta">'
+		 	+ comment.nickname + ' 评论于: <time>' + comment.addDateStr + '</time></div></header>';
+		 //console.log(commentHeadHtml);
+		 	
+		 var commentContentHtml = '<div class="am-comment-bd">' + comment.content + '</div>';
+		 //console.log(commentContentHtml);
+		 
+		 var commentMainHtml = '<div class="am-comment-main">' + commentHeadHtml + commentContentHtml + '</div>';
+		 
+		 var commentHtml = '<li class="am-comment">'+ commentHeadImageHtml + commentMainHtml + '</li>';
+		 //console.log(commentHtml);
+		 
+		 if (insertBefore) {
+			 $('#commentListUl').prepend(commentHtml);
+		 } else {
+			 $('#commentListUl').append(commentHtml);
+		 }
+		 
+	}
+	
+	function initDiaryContent() {
+		UE.getEditor('myEditor', {
+			//这里可以选择自己需要的工具按钮名称,此处仅选择如下五个
+			toolbars:[['FullScreen']],
+			
+			//focus时自动清空初始化时的内容
+			autoClearinitialContent : true,
+			//关闭字数统计
+			wordCount : false,
+			//关闭elementPath
+			elementPathEnabled : false,
+			//默认的编辑区域高度
+			initialFrameHeight : 300,
+			// 上传请求地址:
+			serverUrl : "${contextPath}/ueditor/dispatch",
+			
+			// 只读
+			readonly : true,
+			
+			// 不启动自动保存
+			enableAutoSave: false
+		
+		})
+		
+		if ('${diary.content!}' != '') {
+			var ueditor = UE.getEditor('myEditor');
+			ueditor.addListener("ready", function () {
+		        // editor准备好之后才可以使用
+		        console.log("ueditor is ready");
+		        ueditor.setContent('${diary.content!}');
+
+			});
+		}
+	}
 	
 	function goBack() {
 		history.back();
+	}
+	
+	function addComment() {
+		var content = $.trim($('#commentText').val());
+		if (content == '') {
+			alert("不能发表空评论哦~");
+			return;
+		}
+		
+		$.ajax( {  
+		    url:'${contextPath}/comment/add', 
+		    data:{  
+		             content : content,  
+		             userId : $.cookie('userId'),
+		             diaryId : ${diary.diaryId}
+		    },
+		    type:'post',  
+		    cache:false,  
+		    dataType:'json',
+		    success:function(data) {
+		    	console.log(data);
+		    	data = eval("(" + data + ")");
+		        if(data.code == 0 ){
+		        	alert("评论成功");
+		        	addOneComment(data.comment, true);
+		        	$('#commentText').val("");
+		        }else{  
+		            alert(data.message); 
+		        }  
+		     },  
+		     error : function() {  
+		          alert("异常！");  
+		     }  
+		});
 	}
 	
 	
@@ -23,6 +155,7 @@
 {"pageLevelCSS":pageLevelCSS,"pageLevelJS":pageLevelJS};
 layout("/template/layout/profileLayout.html", layoutParas){ %>
 
+<div class="am-g">
 <div class="am-u-md-8">
     <form class="am-form" action="javascript:void(0)">
     
@@ -35,24 +168,68 @@ layout("/template/layout/profileLayout.html", layoutParas){ %>
     	<label for="weather">天气:</label>
     	<input type="text" id="weather" name="weather" disabled="disabled" value="${weatherMap[diary.weather]}">
     	
-    	<label for="privateType">私密性:</label>
-    	<input type="text" id="privateType" name="privateType" disabled="disabled" value="${privateTypeMap[diary.privateType]}">
+    	<!-- <label for="privateType">私密性:</label>
+    	<input type="text" id="privateType" name="privateType" disabled="disabled" value="${privateTypeMap[diary.privateType]}"> -->
     	
+    	<label for="date">日期:</label>
+    	<input type="text" id="date" name="date" disabled="disabled" value="<% utcFormatFunction(diary.date, 'yyyy-MM-dd'); %>">
     	<br>
     	
     </form>
     
     
 </div>
+</div>
 
+<div class="am-g">
 <div class="am-u-md-12 am-u-sm12">
-	<label for="diaryContent">日记内容:</label>
+	<!-- <label for="diaryContent">日记内容:</label>
 	<div id="diaryContent" style="border:1px solid #cccccc; padding:5px;" ></div>
 	
-	<br>
+	<br> -->
 	
-	<button type="button" class="am-btn am-btn-default" onclick="goBack()">返回</button>
+	<label for="myEditor">日记内容:</label>
+	<script id="myEditor" type="text/plain" ></script>
 	
+</div>
+</div>
+
+
+<div class="am-g">
+<div data-am-widget="titlebar" class="am-titlebar am-titlebar-multi" >
+    <h2 class="am-titlebar-title ">
+        评论列表
+    </h2>
+</div>
+</div>
+
+<div class="am-g">
+<div class="am-u-md-12 am-u-sm12">
+	<ul class="am-comments-list am-comments-list-flip" id="commentListUl">
+	</ul>
+</div>
+</div>
+
+<div class="am-g">
+	<div id="commentDiv" class="am-u-md-12 am-u-sm12" style="display: none">
+		<textarea id="commentText" rows="5" cols="60"></textarea>
+		<button type="button" class="am-btn am-btn-primary" style="align: center;" ' onclick="addComment()">评论</button>
+	</div>
+
+	<div id="commentHint" class="am-u-md-12 am-u-sm12" style="display: none">
+		<span>登录之后才能评论哦~</span>
+	</div>
+	
+	<hr>
+</div>
+
+
+<div class="am-g">
+	<div class="am-u-md-8 am-u-sm-12"></div>
+	
+	<div class="am-u-md-4 am-u-sm-12">
+		<button type="button" class="am-btn am-btn-default" onclick="goBack()">返回</button>
+	</div>
 </div>
 
 <br>
