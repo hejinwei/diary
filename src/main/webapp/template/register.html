@@ -15,6 +15,9 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <META NAME="Title" CONTENT="XM日记">
+  	<META NAME="Description" CONTENT="XM日记">
+  	<META NAME="Keywords" CONTENT="XM日记">
     <link rel="alternate icon" type="image/png" href="${contextPath}/static/assets/i/favicon.ico">
     <link rel="stylesheet" href="${contextPath}/static/assets/css/amazeui.min.css"/>
     <link rel="stylesheet" type="text/css" href="${contextPath}/static/webuploader/webuploader.css">
@@ -63,7 +66,7 @@
 
         <form method="post" class="am-form" 
         	<% if (user == null) {  %> action="${contextPath}/doRegister" <% } else { %> action="${contextPath}/mine/doEditPersonalInfo" <% } %>
-        	onsubmit="check()">
+        	onsubmit="return check()">
         	
         	<% if (user != null) {  %>
         		<input type="hidden" name="userId" value="${user.userId}">
@@ -140,7 +143,8 @@
         var password = $('#password').val();
         var repeatPassword = $('#repeatPassword').val();
         var nickname = $('#nickname').val();
-
+        var headImage = $('#headImage').val();
+        
         if (name == '') {
             alert('用户名不能为空');
             return false;
@@ -182,6 +186,11 @@
         if (nickname == '') {
             alert('昵称不能为空');
             return false;
+        }
+        
+        if (headImage == '' || typeof(headImage) == 'undefined') {
+        	alert('整个头像嘛~');
+        	return false;
         }
         
         return true;

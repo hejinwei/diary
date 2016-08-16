@@ -13,7 +13,7 @@ public class Constants {
 //	public static final String contextPath = "";
 	
 	public static final String webName = "XM日记";
-	public static final String webIntroduction = "爱生活，爱留忆，爱吐槽";
+	public static final String webIntroduction = "原来你是我最想留住的幸运";
 	public static final String icpLicense = "备案还没加";
 	
 	public static final Byte DELETE_STATUS = (byte)1;
