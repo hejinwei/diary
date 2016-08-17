@@ -9,8 +9,8 @@ public class Constants {
 	
 	public static final Integer DEFAULT_PAGE_SIZE = 20;
 	
-	public static final String contextPath = "/diary";
-//	public static final String contextPath = "";
+//	public static final String contextPath = "/diary";
+	public static final String contextPath = "";
 	
 	public static final String webName = "XM日记";
 	public static final String webIntroduction = "原来你是我最想留住的幸运";
